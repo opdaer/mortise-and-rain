@@ -1,0 +1,4525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="description" content="181-part millimeter-accurate Song Dynasty (1103 AD Yingzao Fashi) mortise-and-tenon pavilion with analytical spring disassembly, Karplus-Strong joinery audio, and real-time Anisotropic Kuwahara Song ink scroll shader — single-file zero-asset HTML." />
+<meta property="og:title" content="墨雨天工 · Mortise &amp; Rain — 181-Part Song Dynasty Joinery" />
+<meta property="og:description" content="Interactive 181-part Song Dynasty (1103 AD Yingzao Fashi) mortise-and-tenon pavilion with ±0.00 mm joinery, Rain-Night PBR reflections &amp; Song Ink Scroll shader (single-file zero-asset HTML)." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://mortise-and-rain-song.web.app/" />
+<meta property="og:image" content="https://mortise-and-rain-song.web.app/og-preview.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@jianzhang1987" />
+<meta name="twitter:creator" content="@jianzhang1987" />
+<meta name="twitter:title" content="墨雨天工 · Mortise &amp; Rain — 181-Part Song Dynasty Joinery" />
+<meta name="twitter:description" content="181 procedural wood &amp; stone parts (±0.00 mm fit) exploding across 12 layers &amp; dissolving into a Song Dynasty blue-green ink scroll. Built with Gemini 4 Carbon." />
+<meta name="twitter:image" content="https://mortise-and-rain-song.web.app/og-preview.jpg" />
+<link rel="icon" href="data:," />
+<title>墨雨天工 · Mortise &amp; Rain — 181-Part Song Dynasty Timber Joinery</title>
+<style>
+  :root {
+    --bg-color: #0F171A;
+    --panel-bg: rgba(15, 23, 26, 0.72);
+    --panel-border: rgba(206, 179, 134, 0.28);
+    --text-main: #EAE2D0;
+    --text-muted: rgba(234, 226, 208, 0.62);
+    --accent: #D99B52;
+    --rule-line: rgba(206, 179, 134, 0.18);
+    --font-song: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", "PMingLiU", Georgia, serif;
+    --font-num: "Palatino Linotype", "Book Antiqua", Georgia, var(--font-song);
+  }
+
+  body.mode-ink {
+    --bg-color: #EAE3D2;
+    --panel-bg: rgba(240, 234, 219, 0.88);
+    --panel-border: rgba(38, 35, 29, 0.36);
+    --text-main: #1C1A16;
+    --text-muted: rgba(28, 26, 22, 0.68);
+    --accent: #265450;
+    --rule-line: rgba(38, 35, 29, 0.18);
+  }
+
+  body.instant-ui,
+  body.instant-ui * {
+    transition: none !important;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-color);
+    font-family: var(--font-song);
+    color: var(--text-main);
+    transition: background-color 0.6s ease, color 0.5s ease;
+  }
+
+  #canvas-wrap {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #museum-placard {
+    position: fixed;
+    top: 28px;
+    left: 32px;
+    z-index: 10;
+    padding: 16px 20px 15px 18px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-left: 2.5px solid var(--accent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    min-width: 286px;
+    pointer-events: none;
+    transition: background 0.5s ease, border-color 0.5s ease;
+  }
+
+  .placard-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule-line);
+    margin-bottom: 10px;
+  }
+
+  .placard-cn {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--text-main);
+  }
+
+  .placard-en {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .placard-sub {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .telemetry-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    row-gap: 5px;
+    column-gap: 16px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .telemetry-label {
+    color: var(--text-muted);
+  }
+
+  .telemetry-val {
+    text-align: right;
+    font-family: var(--font-num);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    font-weight: 500;
+  }
+
+  .placard-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 9px;
+    padding-top: 7px;
+    border-top: 1px solid var(--rule-line);
+    font-family: var(--font-num);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    pointer-events: auto;
+  }
+
+  .placard-links a {
+    color: var(--text-main);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--panel-border);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .placard-links a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  body.webdriver .placard-links {
+    display: none;
+  }
+
+  #top-right-bar {
+    position: fixed;
+    top: 28px;
+    right: 32px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .song-btn {
+    appearance: none;
+    background: var(--panel-bg);
+    color: var(--text-main);
+    border: 1px solid var(--panel-border);
+    padding: 9px 15px;
+    font-family: var(--font-num);
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .song-btn:hover {
+    border-color: var(--accent);
+  }
+
+  .mode-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  #bottom-dock {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 9px 20px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    min-width: min(650px, calc(100vw - 48px));
+    transition: background 0.5s ease, border-color 0.5s ease;
+  }
+
+  .slider-caption {
+    font-family: var(--font-num);
+    font-size: 11.5px;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .slider-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #explode-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--panel-border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  #explode-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 0;
+    transform: rotate(45deg);
+    background: var(--accent);
+    border: 1px solid var(--text-main);
+    cursor: grab;
+    transition: transform 0.2s ease;
+  }
+
+  #explode-slider::-webkit-slider-thumb:hover {
+    transform: rotate(45deg) scale(1.22);
+  }
+
+  #explode-pct {
+    font-family: var(--font-num);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    min-width: 42px;
+    text-align: right;
+    color: var(--text-main);
+  }
+
+  #explode-toggle-btn {
+    padding: 7px 15px;
+    white-space: nowrap;
+    border-left: 2px solid var(--accent);
+  }
+
+  #hover-card {
+    position: fixed;
+    z-index: 20;
+    pointer-events: none;
+    padding: 10px 14px;
+    background: var(--panel-bg);
+    border: 1px solid var(--accent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translate(16px, -16px);
+    transition: opacity 0.14s ease;
+    max-width: 300px;
+  }
+
+  #hover-card.visible {
+    opacity: 1;
+  }
+
+  .hover-name {
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--text-main);
+    margin-bottom: 3px;
+  }
+
+  .hover-role {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .hover-dim {
+    font-size: 11px;
+    font-family: var(--font-num);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 720px) {
+    #museum-placard {
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      min-width: 0;
+      padding: 10px 14px;
+    }
+    .placard-cn { font-size: 17px; }
+    .placard-sub { margin-bottom: 6px; font-size: 10.5px; }
+    #top-right-bar {
+      top: 162px;
+      left: 12px;
+      right: auto;
+      gap: 8px;
+    }
+    .song-btn {
+      padding: 7px 11px;
+      font-size: 11.5px;
+      letter-spacing: 0.10em;
+    }
+    #bottom-dock {
+      bottom: 12px;
+      min-width: calc(100vw - 24px);
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .slider-caption { display: none; }
+  }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="canvas-wrap"></div>
+
+  <aside id="museum-placard">
+    <div class="placard-title-row">
+      <span class="placard-cn">墨雨天工</span>
+      <span class="placard-en">Mortise &amp; Rain</span>
+    </div>
+    <div class="placard-sub">宋《营造法式》材分制 · 1103 AD Song Joinery</div>
+    <div class="telemetry-grid">
+      <span class="telemetry-label">构件 · PARTS</span>
+      <span class="telemetry-val" id="stat-count">--</span>
+      <span class="telemetry-label">咬合 · FIT</span>
+      <span class="telemetry-val" id="stat-precision">100.0% · ±0.00 mm</span>
+      <span class="telemetry-label">帧率 · FPS</span>
+      <span class="telemetry-val" id="stat-fps">60 FPS</span>
+    </div>
+    <div class="placard-links">
+      <span>源码 · SOURCE</span>
+      <span><a href="https://github.com/opdaer/mortise-and-rain" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://x.com/jianzhang1987" target="_blank" rel="noopener noreferrer">@jianzhang1987</a></span>
+    </div>
+  </aside>
+
+  <nav id="top-right-bar">
+    <button class="song-btn" id="mode-switch-btn" title="Switch Rain-Night PBR / Song Dynasty Ink Scroll [Key: I]">
+      <span class="mode-dot"></span>
+      <span id="mode-label">画境 · RAIN NIGHT → SONG INK</span>
+    </button>
+    <button class="song-btn" id="audio-btn" title="Toggle Procedural Rain, Guqin &amp; Joinery Audio [Key: M]">
+      <span id="audio-label">声境 · SOUND OFF</span>
+    </button>
+  </nav>
+
+  <section id="bottom-dock">
+    <span class="slider-caption">严丝合缝 · LOCKED</span>
+    <div class="slider-wrap">
+      <input type="range" id="explode-slider" min="0" max="1000" step="1" value="0" aria-label="Disassembly Ratio Slider" />
+      <span id="explode-pct">0%</span>
+    </div>
+    <span class="slider-caption">空中展开 · EXPLODED</span>
+    <button class="song-btn" id="explode-toggle-btn" title="Disassemble / Assemble 168 Joinery Parts [Key: E / Space]">拆解 · EXPLODE</button>
+  </section>
+
+  <div id="hover-card">
+    <div class="hover-name" id="hc-name">栌斗</div>
+    <div class="hover-role" id="hc-role">L4 · Capital Bearing Block (Ludou)</div>
+    <div class="hover-dim" id="hc-dim">SPEC · 300 × 300 × 180 mm</div>
+  </div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+if (navigator.webdriver) {
+  document.body.classList.add('webdriver');
+}
+
+const PALETTE = {
+  woodLight: new THREE.Color('#5C3A21'),
+  woodDark:  new THREE.Color('#3D2616'),
+  tileGlaze: new THREE.Color('#2B373D'),
+  nightBg:   new THREE.Color('#0F171A'),
+  paperBg:   new THREE.Color('#EAE3D2'),
+  lantern:   new THREE.Color('#FF9A3C')
+};
+
+const MAX_LAYER = 12;
+
+class AnalyticalSpringLayers {
+  constructor(numLayers = MAX_LAYER) {
+    this.numLayers = numLayers;
+    this.zeta = 0.74;
+    this.wn = 7.6;
+    this.wd = this.wn * Math.sqrt(1.0 - this.zeta * this.zeta);
+    this.staggerSec = 0.035; // 35ms topological layer stagger
+    this.target = 0.0;
+    this._lastDir = 0;
+    this.layers = [];
+    for (let i = 0; i <= numLayers; i++) {
+      this.layers.push({
+        p0: 0.0, v0: 0.0, p1: 0.0,
+        tStart: 0.0, delay: 0.0,
+        currentP: 0.0, currentV: 0.0,
+        audioArmed: false
+      });
+    }
+  }
+
+  evalLayer(L, t) {
+    const st = this.layers[L];
+    if (L === 0) return { p: 0.0, v: 0.0 };
+    const tau = t - (st.tStart + st.delay);
+    if (tau <= 0.0) return { p: st.p0, v: st.v0 };
+    const d0 = st.p0 - st.p1;
+    if (Math.abs(d0) < 1e-6 && Math.abs(st.v0) < 1e-6) return { p: st.p1, v: 0.0 };
+
+    const zwn = this.zeta * this.wn;
+    const env = Math.exp(-zwn * tau);
+    const c = Math.cos(this.wd * tau);
+    const s = Math.sin(this.wd * tau);
+    const B = (st.v0 + zwn * d0) / this.wd;
+
+    let p = st.p1 + env * (d0 * c + B * s);
+    let v = env * ((B * this.wd - zwn * d0) * c - (d0 * this.wd + zwn * B) * s);
+    // Physical mortise shoulder hard-stop: timber seats flush at p = 0.0 without passing through stone/wood below
+    if (st.p1 <= 1e-4 && p < 0.0) {
+      p = 0.0;
+      v = 0.0;
+    }
+    if (tau > 1.8 && Math.abs(p - st.p1) < 1e-4 && Math.abs(v) < 1e-4) {
+      p = st.p1;
+      v = 0.0;
+    }
+    return { p, v };
+  }
+
+  setTarget(newTarget, nowSec, useStagger = true, instant = false) {
+    const clamped = Math.max(0.0, Math.min(1.0, newTarget));
+    const deltaTarget = clamped - this.target;
+    if (!instant && Math.abs(deltaTarget) < 1e-6) return;
+
+    const expanding = Math.abs(deltaTarget) > 1e-6 ? (deltaTarget > 0) : (clamped >= 0.5);
+    const newDir = expanding ? 1 : -1;
+    const dirChanged = (this._lastDir !== 0) && (newDir !== this._lastDir) && Math.abs(deltaTarget) > 0.004;
+    this._lastDir = instant ? 0 : newDir;
+    this.target = clamped;
+
+    for (let L = 1; L <= this.numLayers; L++) {
+      const st = this.layers[L];
+      if (instant) {
+        st.p0 = clamped; st.v0 = 0.0; st.p1 = clamped;
+        st.tStart = nowSec; st.delay = 0.0;
+        st.currentP = clamped; st.currentV = 0.0;
+        st.audioArmed = false;
+        continue;
+      }
+
+      const cur = this.evalLayer(L, nowSec);
+      const orderIndex = expanding ? (this.numLayers - L) : (L - 1);
+      const staggerDelay = useStagger ? orderIndex * this.staggerSec : 0.0;
+      const scheduledStart = st.tStart + st.delay;
+      const isPendingStagger = (nowSec < scheduledStart) && (Math.abs(st.p1 - st.p0) > 1e-5) && !dirChanged;
+
+      if (isPendingStagger) {
+        // Preserve scheduled topological stagger start during continuous 60Hz slider scrubbing
+        st.p1 = clamped;
+      } else if (Math.abs(cur.v) > 0.015 && !dirChanged && nowSec >= scheduledStart) {
+        // Layer has already crossed its stagger slot and is moving: continue smoothly with momentum
+        st.p0 = cur.p;
+        st.v0 = cur.v;
+        st.p1 = clamped;
+        st.tStart = nowSec;
+        st.delay = 0.0;
+      } else {
+        // Fresh trigger from rest or direction reversal: schedule full 35ms/layer topological cascade
+        st.p0 = cur.p;
+        st.v0 = cur.v;
+        st.p1 = clamped;
+        st.tStart = nowSec;
+        st.delay = staggerDelay;
+        st.audioArmed = useStagger && Math.abs(clamped - cur.p) > 0.08;
+      }
+    }
+  }
+
+  update(nowSec, onLayerKnock = null) {
+    let sumP = 0.0;
+    let maxErr = 0.0;
+    for (let L = 1; L <= this.numLayers; L++) {
+      const st = this.layers[L];
+      const prevP = st.currentP;
+      const res = this.evalLayer(L, nowSec);
+      st.currentP = res.p;
+      st.currentV = res.v;
+      sumP += res.p;
+      maxErr = Math.max(maxErr, Math.abs(res.p));
+
+      if (st.audioArmed && onLayerKnock) {
+        const tau = nowSec - (st.tStart + st.delay);
+        if (st.p1 > st.p0 && tau >= 0.0) {
+          st.audioArmed = false;
+          onLayerKnock(L, false);
+        } else if (st.p1 < st.p0 && Math.abs(res.p - st.p1) < 0.06 && Math.abs(prevP - st.p1) >= 0.06) {
+          st.audioArmed = false;
+          onLayerKnock(L, true);
+        }
+      }
+    }
+    return { avgRatio: sumP / this.numLayers, maxDisplacementRatio: maxErr };
+  }
+}
+
+class ZenAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.enabled = false;
+    this.masterGain = null;
+    this.malletImpulseBuf = null;
+    this.pentatonicHz = [261.63, 294.33, 331.13, 392.44, 441.50, 523.25, 588.67, 662.25, 784.88];
+    this.noteIdx = 0;
+    this.lastKnockStamp = 0;
+    this.lastGuqinStamp = 0;
+    this.activeKnockVoices = [];
+    this.activeGuqinVoices = [];
+    this.ksBufferCache = new Map();
+  }
+
+  init() {
+    if (this.ctx) return;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    this.ctx = new AudioCtx();
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.value = 0.0;
+    this.masterGain.connect(this.ctx.destination);
+    this._buildMalletImpulseBuffer();
+    this._setupRainAndBambooAmbience();
+  }
+
+  _buildMalletImpulseBuffer() {
+    const sr = this.ctx.sampleRate;
+    const len = Math.max(64, Math.floor(sr * 0.012));
+    const buf = this.ctx.createBuffer(1, len, sr);
+    const ch = buf.getChannelData(0);
+    let seed = 48271;
+    for (let i = 0; i < len; i++) {
+      seed = (seed * 16807) % 2147483647;
+      const n = ((seed - 1) / 1073741823.0) - 1.0;
+      const env = Math.exp(-i / (sr * 0.0024)) * Math.sin(Math.PI * Math.min(1.0, i / (sr * 0.0012)));
+      ch[i] = n * env * 0.85;
+    }
+    this.malletImpulseBuf = buf;
+  }
+
+  // Sample-accurate fractional-delay Karplus-Strong cedar waveguide (avoids 128-sample Web Audio feedback quantum clamp >375Hz)
+  _getKarplusStrongBuffer(f0, isLocking) {
+    const qFreq = Math.round(f0 * 0.5) * 2;
+    const key = `${qFreq}_${isLocking ? 1 : 0}`;
+    let cached = this.ksBufferCache.get(key);
+    if (cached) return cached;
+
+    const sr = this.ctx.sampleRate;
+    const dur = 0.22;
+    const totalLen = Math.floor(sr * dur);
+    const buf = this.ctx.createBuffer(1, totalLen, sr);
+    const out = buf.getChannelData(0);
+    const period = Math.max(8.0, sr / qFreq);
+    const delayN = Math.ceil(period) + 2;
+    const ring = new Float32Array(delayN);
+
+    let seed = 48271 + qFreq * 13;
+    const burstLen = Math.min(totalLen, Math.max(48, Math.floor(sr * 0.009)));
+    for (let i = 0; i < burstLen; i++) {
+      seed = (seed * 16807) % 2147483647;
+      const noise = ((seed - 1) / 1073741823.0) - 1.0;
+      const mallet = Math.exp(-i / (sr * 0.0022)) * Math.sin(Math.PI * Math.min(1.0, i / (sr * 0.0011)));
+      out[i] = noise * mallet * 0.90;
+    }
+
+    const fbBase = isLocking ? 0.962 : 0.948;
+    const damp = isLocking ? 0.44 : 0.52;
+    let wIdx = 0;
+    let lpState = 0.0;
+    for (let i = 0; i < totalLen; i++) {
+      const rExact = wIdx - period;
+      const r0 = ((Math.floor(rExact) % delayN) + delayN) % delayN;
+      const r1 = (r0 + 1) % delayN;
+      const frac = rExact - Math.floor(rExact);
+      const delayed = ring[r0] * (1.0 - frac) + ring[r1] * frac;
+      lpState = delayed * (1.0 - damp) + lpState * damp;
+      const sample = (i < burstLen ? out[i] : 0.0) + lpState * fbBase;
+      ring[wIdx] = sample;
+      out[i] = sample * 0.42;
+      wIdx = (wIdx + 1) % delayN;
+    }
+
+    if (this.ksBufferCache.size > 96) {
+      const firstKey = this.ksBufferCache.keys().next().value;
+      this.ksBufferCache.delete(firstKey);
+    }
+    this.ksBufferCache.set(key, buf);
+    return buf;
+  }
+
+  toggle(initialStepOffset = 2) {
+    this.init();
+    if (!this.ctx) return false;
+    this.enabled = !this.enabled;
+    const applyGainAndChime = () => {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.setTargetAtTime(this.enabled ? 0.58 : 0.0, now, 0.22);
+      if (this.enabled && initialStepOffset !== null) this.playGuqinHarmonic(initialStepOffset, true);
+    };
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().then(applyGainAndChime).catch(() => {});
+    } else {
+      applyGainAndChime();
+    }
+    return this.enabled;
+  }
+
+  ensureUnlockedQuietly() {
+    if (this.enabled && this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  }
+
+  _setupRainAndBambooAmbience() {
+    const ctx = this.ctx;
+    const sr = ctx.sampleRate;
+    const len = sr * 4;
+    const buf = ctx.createBuffer(2, len, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = buf.getChannelData(ch);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      let seed = 104729 + ch * 7919;
+      for (let i = 0; i < len; i++) {
+        seed = (seed * 16807) % 2147483647;
+        const white = ((seed - 1) / 1073741823.0) - 1.0;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.032;
+        b6 = white * 0.115926;
+      }
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+
+    const tileFilter = ctx.createBiquadFilter();
+    tileFilter.type = 'bandpass';
+    tileFilter.frequency.value = 880;
+    tileFilter.Q.value = 0.85;
+
+    const leafFilter = ctx.createBiquadFilter();
+    leafFilter.type = 'bandpass';
+    leafFilter.frequency.value = 3250;
+    leafFilter.Q.value = 1.25;
+
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.14;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = 620;
+    lfo.connect(lfoGain);
+    lfoGain.connect(leafFilter.frequency);
+
+    const rainGain = ctx.createGain();
+    rainGain.gain.value = 0.36;
+    const leafGain = ctx.createGain();
+    leafGain.gain.value = 0.18;
+
+    src.connect(tileFilter);
+    src.connect(leafFilter);
+    tileFilter.connect(rainGain);
+    leafFilter.connect(leafGain);
+    rainGain.connect(this.masterGain);
+    leafGain.connect(this.masterGain);
+    src.start();
+    lfo.start();
+
+    const scheduleDroplet = () => {
+      if (this.enabled && this.ctx && this.ctx.state === 'running') {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        const baseF = 1650 + Math.random() * 1600;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(baseF * 0.82, now);
+        osc.frequency.exponentialRampToValueAtTime(baseF * 1.38, now + 0.038);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(0.024, now + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.065);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+      setTimeout(scheduleDroplet, 200 + Math.random() * 520);
+    };
+    scheduleDroplet();
+  }
+
+  playWoodKnock(volumeM3 = 0.012, isLocking = true) {
+    if (!this.enabled || !this.ctx || this.ctx.state !== 'running') return;
+    const perfNow = performance.now();
+    if (perfNow - this.lastKnockStamp < 22) return;
+    this.lastKnockStamp = perfNow;
+
+    while (this.activeKnockVoices.length >= 8) {
+      const oldest = this.activeKnockVoices.shift();
+      try { oldest.disconnect(); } catch (_) {}
+    }
+
+    const ctx = this.ctx;
+    const now = ctx.currentTime;
+    const clampedV = Math.max(0.0008, Math.min(0.25, volumeM3));
+    const f0 = Math.max(145, Math.min(880, 152 * Math.pow(clampedV, -0.24))) * (isLocking ? 1.0 : 1.08);
+
+    const voiceBus = ctx.createGain();
+    voiceBus.gain.setValueAtTime(0.85, now);
+    voiceBus.gain.exponentialRampToValueAtTime(0.0008, now + 0.24);
+    voiceBus.connect(this.masterGain);
+    this.activeKnockVoices.push(voiceBus);
+
+    // 1. Sample-accurate Karplus-Strong physical waveguide resonator tuned strictly to f0 (145..880 Hz)
+    const ksBuf = this._getKarplusStrongBuffer(f0, isLocking);
+    if (ksBuf) {
+      const ksSrc = ctx.createBufferSource();
+      ksSrc.buffer = ksBuf;
+      const ksBody = ctx.createBiquadFilter();
+      ksBody.type = 'bandpass';
+      ksBody.frequency.setValueAtTime(f0 * 1.15, now);
+      ksBody.Q.value = 1.15;
+      ksSrc.connect(ksBody);
+      ksBody.connect(voiceBus);
+      ksSrc.start(now);
+    }
+
+    // 2. Orthotropic free-bar modal woodblock partials (1 : 2.756 : 5.404)
+    const modes = [1.0, 2.756, 5.404];
+    const gains = [0.16, 0.082, 0.030];
+    const decays = [0.13, 0.055, 0.025];
+
+    modes.forEach((ratio, idx) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = idx === 0 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(f0 * ratio * 1.03, now);
+      osc.frequency.exponentialRampToValueAtTime(f0 * ratio, now + 0.022);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.linearRampToValueAtTime(gains[idx], now + 0.0025);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + decays[idx]);
+      osc.connect(g);
+      g.connect(voiceBus);
+      osc.start(now);
+      osc.stop(now + decays[idx] + 0.02);
+      if (idx === 0) {
+        osc.onended = () => {
+          const pos = this.activeKnockVoices.indexOf(voiceBus);
+          if (pos !== -1) this.activeKnockVoices.splice(pos, 1);
+          try { voiceBus.disconnect(); } catch (_) {}
+        };
+      }
+    });
+  }
+
+  playGuqinHarmonic(stepOffset = null, bypassStateGuard = false) {
+    if (!this.enabled || !this.ctx) return;
+    if (!bypassStateGuard && this.ctx.state !== 'running') {
+      this.ctx.resume().then(() => this.playGuqinHarmonic(stepOffset, true)).catch(() => {});
+      return;
+    }
+    const perfNow = performance.now();
+    if (perfNow - this.lastGuqinStamp < 45) return;
+    this.lastGuqinStamp = perfNow;
+
+    while (this.activeGuqinVoices.length >= 5) {
+      const oldest = this.activeGuqinVoices.shift();
+      try { oldest.disconnect(); } catch (_) {}
+    }
+
+    const ctx = this.ctx;
+    const now = ctx.currentTime;
+    const idx = stepOffset !== null ? (stepOffset % this.pentatonicHz.length) : (this.noteIdx++ % this.pentatonicHz.length);
+    const freq = this.pentatonicHz[idx];
+    const partials = [1.0, 2.0, 3.002, 4.005];
+    const amps = [0.15, 0.11, 0.055, 0.022];
+    const durs = [3.2, 2.4, 1.6, 1.0];
+
+    const body = ctx.createBiquadFilter();
+    body.type = 'peaking';
+    body.frequency.value = 220;
+    body.Q.value = 1.4;
+    body.gain.value = 4.5;
+    body.connect(this.masterGain);
+    this.activeGuqinVoices.push(body);
+
+    partials.forEach((p, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * p, now);
+      osc.frequency.linearRampToValueAtTime(freq * p * 1.0035, now + 0.35);
+      osc.frequency.linearRampToValueAtTime(freq * p, now + 0.85);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.linearRampToValueAtTime(amps[i], now + 0.014);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + durs[i]);
+      osc.connect(g);
+      g.connect(body);
+      osc.start(now);
+      osc.stop(now + durs[i] + 0.05);
+      if (i === 0) {
+        osc.onended = () => {
+          const pos = this.activeGuqinVoices.indexOf(body);
+          if (pos !== -1) this.activeGuqinVoices.splice(pos, 1);
+          try { body.disconnect(); } catch (_) {}
+        };
+      }
+    });
+  }
+}
+
+const zenAudio = new ZenAudioEngine();
+const springCtrl = new AnalyticalSpringLayers(MAX_LAYER);
+
+// ============================================================================
+// 5. RENDERER, SCENE, LIGHTING & PROCEDURAL ENVIRONMENT
+// ============================================================================
+const wrapEl = document.getElementById('canvas-wrap');
+const renderer = new THREE.WebGLRenderer({
+  antialias: false,
+  powerPreference: 'high-performance',
+  stencil: false
+});
+let DPR = Math.min(window.devicePixelRatio || 1, 2.0);
+renderer.setPixelRatio(DPR);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.AgXToneMapping;
+renderer.toneMappingExposure = 1.18;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.shadowMap.autoUpdate = false;
+renderer.shadowMap.needsUpdate = true;
+renderer.localClippingEnabled = true;
+wrapEl.appendChild(renderer.domElement);
+
+// Inject Percentage-Closer Soft Shadows (PCSS: IGN-rotated Vogel-disk blocker search + contact-hardening penumbra)
+{
+  const chunk = THREE.ShaderChunk.shadowmap_pars_fragment;
+  const sig = 'float getShadow( sampler2D shadowMap, vec2 shadowMapSize, float shadowBias, float shadowRadius, vec4 shadowCoord ) {';
+  const startIdx = chunk.indexOf(sig);
+  if (startIdx !== -1) {
+    let depth = 0;
+    let endIdx = -1;
+    for (let i = startIdx + sig.length - 1; i < chunk.length; i++) {
+      if (chunk[i] === '{') depth++;
+      else if (chunk[i] === '}') {
+        depth--;
+        if (depth === 0) { endIdx = i; break; }
+      }
+    }
+    if (endIdx !== -1) {
+      const pcssFn = `float getShadow( sampler2D shadowMap, vec2 shadowMapSize, float shadowBias, float shadowRadius, vec4 shadowCoord ) {
+        shadowCoord.xyz /= shadowCoord.w;
+        shadowCoord.z += shadowBias;
+        float inFrustum = step( 0.0, shadowCoord.x ) * step( shadowCoord.x, 1.0 )
+                        * step( 0.0, shadowCoord.y ) * step( shadowCoord.y, 1.0 )
+                        * step( 0.0, shadowCoord.z ) * step( shadowCoord.z, 1.0 );
+        vec2 texel = vec2( 1.0 ) / shadowMapSize;
+        float ign = fract( 52.9829189 * fract( dot( gl_FragCoord.xy, vec2( 0.06711056, 0.00583715 ) ) ) ) * 6.2831853;
+        float ca = cos( ign );
+        float sa = sin( ign );
+        mat2 rot = mat2( ca, -sa, sa, ca );
+        float searchR = 7.5 * shadowRadius;
+        float blockerSum = 0.0;
+        float blockerCount = 0.0;
+        for ( int i = 0; i < 8; i ++ ) {
+          float fi = float( i );
+          float r = sqrt( ( fi + 0.5 ) / 8.0 ) * searchR;
+          float theta = fi * 2.3999632;
+          vec2 uvOff = clamp( shadowCoord.xy + ( rot * vec2( cos( theta ), sin( theta ) ) ) * texel * r, 0.001, 0.999 );
+          float d = unpackRGBAToDepth( texture2D( shadowMap, uvOff ) );
+          float isBlocker = step( d, shadowCoord.z - 0.0001 );
+          blockerSum += d * isBlocker;
+          blockerCount += isBlocker;
+        }
+        float avgBlocker = blockerSum / max( blockerCount, 1.0 );
+        float penumbra = clamp( ( shadowCoord.z - avgBlocker ) / max( avgBlocker, 0.025 ) * 28.0, 0.95, 6.80 ) * shadowRadius;
+        float shadowSum = 0.0;
+        for ( int i = 0; i < 12; i ++ ) {
+          float fi = float( i );
+          float r = sqrt( ( fi + 0.5 ) / 12.0 ) * penumbra;
+          float theta = fi * 2.3999632 + 1.0472;
+          vec2 uvOff = clamp( shadowCoord.xy + ( rot * vec2( cos( theta ), sin( theta ) ) ) * texel * r, 0.001, 0.999 );
+          shadowSum += texture2DCompare( shadowMap, uvOff, shadowCoord.z );
+        }
+        float litVal = mix( 1.0, shadowSum / 12.0, step( 0.5, blockerCount ) );
+        return mix( 1.0, litVal, inFrustum );
+      }`;
+      THREE.ShaderChunk.shadowmap_pars_fragment = chunk.slice(0, startIdx) + pcssFn + chunk.slice(endIdx + 1);
+    }
+  }
+}
+
+const scene = new THREE.Scene();
+scene.background = PALETTE.nightBg.clone();
+
+// FOV 28° Telephoto Lens
+const camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.15, 110);
+camera.position.set(6.9, 2.75, 13.8);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0.0, 2.42, 0.0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.065;
+controls.minDistance = 2.6;
+controls.maxDistance = 32.0;
+controls.maxPolarAngle = Math.PI * 0.64;
+controls.minPolarAngle = 0.12;
+controls.update();
+
+const sharedUniforms = {
+  uTime: { value: 0.0 },
+  uInkMix: { value: 0.0 },
+  uExplodeAvg: { value: 0.0 }
+};
+
+const fallbackShadowTex = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat);
+fallbackShadowTex.needsUpdate = true;
+
+// Procedural PMREM Environment for Wet Tile & Oiled Cedar Clearcoat Reflections
+{
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const envScene = new THREE.Scene();
+  const envGeo = new THREE.SphereGeometry(20, 32, 24);
+  const envMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    depthWrite: false,
+    vertexShader: `
+      varying vec3 vDir;
+      void main() {
+        vDir = normalize(position);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vDir;
+      void main() {
+        float y = vDir.y;
+        vec3 zenith = vec3(0.20, 0.31, 0.38);
+        vec3 horizon = vec3(0.32, 0.42, 0.47);
+        vec3 ground = vec3(0.08, 0.07, 0.06);
+        vec3 col = y >= 0.0
+          ? mix(horizon, zenith, pow(y, 0.55))
+          : mix(horizon * 0.45, ground, pow(-y, 0.5));
+        float moonSpot = pow(max(0.0, dot(vDir, normalize(vec3(-0.45, 0.72, 0.52)))), 28.0);
+        col += vec3(0.75, 0.88, 0.98) * moonSpot * 1.15;
+        float warmGlow = pow(max(0.0, 1.0 - abs(y - 0.05) * 3.0), 2.0) * 0.16;
+        col += vec3(1.0, 0.58, 0.22) * warmGlow;
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+  envScene.add(new THREE.Mesh(envGeo, envMat));
+  const envRT = pmrem.fromScene(envScene, 0.035);
+  scene.environment = envRT.texture;
+  envGeo.dispose();
+  envMat.dispose();
+  pmrem.dispose();
+}
+
+const hemiLight = new THREE.HemisphereLight('#688DA4', '#332216', 1.35);
+scene.add(hemiLight);
+
+const moonLight = new THREE.DirectionalLight('#C2DDF0', 2.85);
+moonLight.position.set(-6.8, 12.2, 8.2);
+moonLight.castShadow = true;
+moonLight.shadow.mapSize.set(2048, 2048);
+moonLight.shadow.camera.near = 2.0;
+moonLight.shadow.camera.far = 30.0;
+moonLight.shadow.camera.left = -9.8;
+moonLight.shadow.camera.right = 10.8;
+moonLight.shadow.camera.top = 11.4;
+moonLight.shadow.camera.bottom = -7.4;
+moonLight.shadow.bias = -0.00045;
+moonLight.shadow.radius = 1.20;
+scene.add(moonLight);
+
+const rimLight = new THREE.DirectionalLight('#7BA3BC', 1.15);
+rimLight.position.set(7.5, 6.4, -7.2);
+scene.add(rimLight);
+
+const lanternLight = new THREE.PointLight('#FF9A3C', 14.5, 12.5, 1.5);
+lanternLight.position.set(0.0, 2.38, 0.0);
+scene.add(lanternLight);
+
+const warmBounceLight = new THREE.PointLight('#FFAE5E', 3.6, 8.0, 1.55);
+warmBounceLight.position.set(0.0, 0.85, 0.0);
+scene.add(warmBounceLight);
+
+// ============================================================================
+// 6. PROCEDURAL GLSL MATERIALS
+// ============================================================================
+const GLSL_NOISE_LIB = `
+  float hash13(vec3 p3) {
+    p3 = fract(p3 * 0.1031);
+    p3 += dot(p3, p3.zyx + 31.32);
+    return fract((p3.x + p3.y) * p3.z);
+  }
+
+  float noise3D(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(
+      mix(mix(hash13(i + vec3(0,0,0)), hash13(i + vec3(1,0,0)), f.x),
+          mix(hash13(i + vec3(0,1,0)), hash13(i + vec3(1,1,0)), f.x), f.y),
+      mix(mix(hash13(i + vec3(0,0,1)), hash13(i + vec3(1,0,1)), f.x),
+          mix(hash13(i + vec3(0,1,1)), hash13(i + vec3(1,1,1)), f.x), f.y),
+      f.z
+    );
+  }
+
+  float fbm3(vec3 p) {
+    float v = 0.0;
+    float a = 0.5;
+    for (int i = 0; i < 4; i++) {
+      v += a * noise3D(p);
+      p = p * 2.03 + vec3(13.7, -7.3, 5.1);
+      a *= 0.5;
+    }
+    return v;
+  }
+`;
+
+function createCedarMaterial(isHover = false) {
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.42,
+    metalness: 0.0,
+    clearcoat: 0.35,
+    clearcoatRoughness: 0.28,
+    envMapIntensity: isHover ? 1.35 : 0.92,
+    emissive: isHover ? new THREE.Color('#4A2B12') : new THREE.Color('#000000'),
+    emissiveIntensity: isHover ? 0.55 : 0.0
+  });
+
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uInkMix = sharedUniforms.uInkMix;
+    shader.uniforms.uExplodeAvg = sharedUniforms.uExplodeAvg;
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        '#include <common>',
+        `#include <common>
+         attribute vec4 aWoodCoord;
+         varying vec4 vWoodCoord;
+         varying vec3 vWoodWorld;`
+      )
+      .replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+         vWoodCoord = aWoodCoord;
+         vWoodWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;`
+      );
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <common>',
+        `#include <common>
+         uniform float uInkMix;
+         uniform float uExplodeAvg;
+         varying vec4 vWoodCoord;
+         varying vec3 vWoodWorld;
+         ${GLSL_NOISE_LIB}`
+      )
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+         float seed = abs(vWoodCoord.w);
+         float isColumnCut = step(0.5, -vWoodCoord.w);
+         // Quarter-sawn / rift-sawn off-center pith for beams & Dougong so growth rings flow tightly without bullseye blobs
+         vec2 sawnPith = vec2(0.24 + sin(seed * 17.3) * 0.055, -0.19 + cos(seed * 29.1) * 0.055);
+         vec2 colPith  = vec2(0.085 * sin(seed * 11.7), 0.085 * cos(seed * 19.3));
+         vec2 pithOffset = mix(sawnPith, colPith, isColumnCut);
+         vec2 crossPos = vWoodCoord.yz - pithOffset;
+         float along = vWoodCoord.x;
+
+         vec3 sampleP = vec3(along * 3.2 + seed * 3.7, crossPos.x * 22.0, crossPos.y * 22.0);
+         float swirl = fbm3(sampleP);
+         float knotDist = length(vec2(along * 2.1 - sin(seed * 9.2) * 0.42, crossPos.x * 9.5 + cos(seed * 5.1) * 0.25));
+         float knotSwirl = exp(-knotDist * knotDist * 28.0) * 0.24;
+
+         float radial = length(crossPos) + swirl * 0.018 + knotSwirl * 0.028;
+         float ringWave = sin(radial * 340.0 + swirl * 3.6);
+         float rings = smoothstep(-0.62, 0.58, ringWave);
+
+         float fibers = noise3D(vec3(along * 68.0, crossPos.x * 320.0, crossPos.y * 320.0 + seed * 11.0));
+         float medullary = noise3D(vec3(along * 14.0 + seed, crossPos.x * 95.0, crossPos.y * 95.0));
+         float patina = 0.86 + 0.20 * fbm3(vec3(along * 1.6, crossPos.x * 7.0, crossPos.y * 7.0 + seed));
+         float grain = clamp(rings * 0.64 + fibers * 0.24 + medullary * 0.12, 0.0, 1.0);
+
+         // Strictly bounded Aged Cedar (#5C3A21) <-> Chestnut (#3D2616)
+         vec3 earlyWood = pow(vec3(0.375, 0.232, 0.128), vec3(2.2)) * patina; // Deep #5C3A21 aged Chinese fir
+         vec3 lateWood  = pow(vec3(0.205, 0.122, 0.068), vec3(2.2)) * patina; // Resinous #3D2616 chestnut latewood
+
+         // Natural coffer self-occlusion under deep eaves so outer 望板/rafters read as deep oiled fir rather than orange glare
+         float eaveRad = length(vWoodWorld.xz);
+         float roofSoffitMask = smoothstep(3.32, 3.68, vWoodWorld.y) * (1.0 - smoothstep(0.15, 0.65, uExplodeAvg));
+         float eaveShade = mix(1.0, mix(0.76, 0.52, smoothstep(0.85, 2.15, eaveRad)), roofSoffitMask);
+
+         vec3 woodCol = mix(lateWood, earlyWood, grain) * eaveShade;
+         vec3 inkWoodCol = mix(pow(vec3(0.25, 0.165, 0.102), vec3(2.2)), pow(vec3(0.48, 0.325, 0.195), vec3(2.2)), grain);
+         diffuseColor.rgb *= mix(woodCol, inkWoodCol, uInkMix * 0.92);
+
+         float woodHeight = rings * 0.62 + fibers * 0.38;`
+      )
+      .replace(
+        '#include <roughnessmap_fragment>',
+        `#include <roughnessmap_fragment>
+         roughnessFactor = mix(clamp(roughness + (0.5 - grain) * 0.10, 0.30, 0.56), 0.78, uInkMix);`
+      )
+      .replace(
+        '#include <clearcoat_fragment>',
+        `#include <clearcoat_fragment>
+         clearcoatFactor *= (1.0 - uInkMix * 0.92);`
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+         // Physically-scaled Mikkelsen screen-space derivative surface gradient bump mapping (1.1mm grain relief)
+         vec2 dWood = clamp(vec2(dFdx(woodHeight), dFdy(woodHeight)), vec2(-0.22), vec2(0.22));
+         vec3 dPxW = dFdx(vViewPosition);
+         vec3 dPyW = dFdy(vViewPosition);
+         vec3 r1W = cross(dPyW, normal);
+         vec3 r2W = cross(normal, dPxW);
+         float detW = dot(dPxW, r1W);
+         float edgeGuardW = step(1e-10, abs(detW)) * step(dot(dPxW, dPxW) + dot(dPyW, dPyW), 0.0025);
+         vec3 surfGradW = sign(detW) * (dWood.x * r1W + dWood.y * r2W);
+         normal = normalize(abs(detW) * normal - surfGradW * (0.0011 * edgeGuardW * (1.0 - uInkMix * 0.75)));`
+      );
+  };
+  mat.customProgramCacheKey = () => (isHover ? 'cedar-hover-v3' : 'cedar-base-v3');
+  return mat;
+}
+
+function createGlazedTileMaterial(isHover = false) {
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.18,
+    metalness: 0.04,
+    clearcoat: 0.68,
+    clearcoatRoughness: 0.11,
+    envMapIntensity: isHover ? 1.65 : 1.32,
+    emissive: isHover ? new THREE.Color('#1E3640') : new THREE.Color('#000000'),
+    emissiveIntensity: isHover ? 0.55 : 0.0
+  });
+
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = sharedUniforms.uTime;
+    shader.uniforms.uInkMix = sharedUniforms.uInkMix;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\nvarying vec3 vTileWorld;`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>\nvTileWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;`);
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\nuniform float uTime;\nuniform float uInkMix;\nvarying vec3 vTileWorld;\n${GLSL_NOISE_LIB}`)
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+         float glazeVar = fbm3(vTileWorld * 6.5);
+         float radialAngle = atan(vTileWorld.z, vTileWorld.x);
+         float radialDist = length(vTileWorld.xz);
+         float rivulet = noise3D(vec3(radialAngle * 38.0, radialDist * 9.0 - uTime * 1.4, vTileWorld.y * 4.0));
+
+         vec3 slateBase = pow(vec3(0.118, 0.158, 0.180), vec3(2.2)) * (0.90 + glazeVar * 0.32); // Deep wet #2B373D烟雨青黛
+         vec3 mineralCyan = mix(
+           pow(vec3(0.085, 0.305, 0.340), vec3(2.2)),
+           pow(vec3(0.185, 0.495, 0.425), vec3(2.2)),
+           clamp(glazeVar * 0.7 + (vTileWorld.y - 3.4) * 0.35, 0.0, 1.0)
+         );
+         diffuseColor.rgb *= mix(slateBase, mineralCyan, uInkMix);`
+      )
+      .replace(
+        '#include <roughnessmap_fragment>',
+        `#include <roughnessmap_fragment>
+         roughnessFactor = mix(mix(0.14, 0.22, rivulet), 0.65, uInkMix);`
+      )
+      .replace(
+        '#include <clearcoat_fragment>',
+        `#include <clearcoat_fragment>
+         clearcoatFactor *= (1.0 - uInkMix * 0.90);`
+      );
+  };
+  mat.customProgramCacheKey = () => (isHover ? 'tile-hover-v2' : 'tile-base-v2');
+  return mat;
+}
+
+function createPlinthStoneMaterial(isHover = false) {
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.34,
+    metalness: 0.02,
+    clearcoat: 0.38,
+    clearcoatRoughness: 0.20,
+    envMapIntensity: 0.96,
+    emissive: isHover ? new THREE.Color('#27353B') : new THREE.Color('#000000'),
+    emissiveIntensity: isHover ? 0.5 : 0.0
+  });
+
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uInkMix = sharedUniforms.uInkMix;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\nvarying vec3 vStoneW;\nvarying vec3 vStoneN;`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>\nvStoneW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvStoneN = normalize(mat3(modelMatrix) * objectNormal);`);
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\nuniform float uInkMix;\nvarying vec3 vStoneW;\nvarying vec3 vStoneN;\n${GLSL_NOISE_LIB}`)
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+         float n = fbm3(vStoneW * 4.8);
+         float chiselStripes = sin(vStoneW.x * 165.0 + vStoneW.z * 165.0 + n * 5.2) * 0.5 + 0.5;
+         float bushHammer = noise3D(vStoneW * vec3(48.0, 128.0, 48.0)) * 0.52 + noise3D(vStoneW * 22.0) * 0.30 + chiselStripes * 0.18;
+         float wTop = smoothstep(0.45, 0.78, abs(vStoneN.y));
+         vec2 topGrid = abs(fract(vStoneW.xz * 1.25 + 0.5) - 0.5);
+         float topSeam = smoothstep(0.010, 0.028, min(topGrid.x, topGrid.y));
+         // Running-bond 80mm ashlar masonry courses clearly articulated across every 160mm vertical riser
+         float runCoord = abs(vStoneN.x) > abs(vStoneN.z) ? vStoneW.z : vStoneW.x;
+         float courseIdx = floor(vStoneW.y / 0.080 + 0.02);
+         float vertJoint = abs(fract(runCoord * 1.35 + mod(courseIdx, 2.0) * 0.5) - 0.5);
+         float bedJoint  = abs(fract(vStoneW.y / 0.080 + 0.02) - 0.5);
+         float riserVert = smoothstep(0.010, 0.032, vertJoint);
+         float riserBed  = smoothstep(0.035, 0.115, 0.5 - bedJoint);
+         float riserSeam = riserVert * (0.35 + 0.65 * riserBed);
+         float seam = mix(riserSeam, topSeam, wTop);
+         float blockVar = 0.88 + 0.22 * hash13(vec3(floor(runCoord * 1.35 + mod(courseIdx, 2.0) * 0.5), courseIdx, floor(vStoneW.x * 0.5)));
+         float groundWetAO = mix(0.54, 1.0, smoothstep(0.0, 0.14, vStoneW.y));
+         vec3 wetSlate = pow(vec3(0.098, 0.126, 0.144), vec3(2.2)) * (0.76 + n * 0.34 + bushHammer * 0.20) * blockVar * (0.52 + 0.48 * seam) * groundWetAO;
+         // Neutral-cool Song sumi bluestone (淡墨青石: B >= R prevents ochre blotches, modest cyan keeps mineral 石青/石绿 exclusive to roof/peaks)
+         vec3 inkStone = pow(vec3(0.300, 0.308, 0.310), vec3(2.2)) * (0.84 + n * 0.22 + bushHammer * 0.10) * blockVar * (0.70 + 0.30 * seam);
+         diffuseColor.rgb *= mix(wetSlate, inkStone, uInkMix);
+         float stoneHeight = n * 0.36 + bushHammer * 0.52 + seam * 0.68;`
+      )
+      .replace(
+        '#include <roughnessmap_fragment>',
+        `#include <roughnessmap_fragment>
+         roughnessFactor = mix(clamp(roughness + (0.5 - bushHammer) * 0.18 + (1.0 - seam) * 0.14, 0.22, 0.56), 0.90, uInkMix);`
+      )
+      .replace(
+        '#include <clearcoat_fragment>',
+        `#include <clearcoat_fragment>
+         clearcoatFactor *= (1.0 - uInkMix * 0.98);`
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+         // Physically-scaled Mikkelsen screen-space derivative surface gradient bump mapping (3.8mm chiseled stone & mortar relief!)
+         vec2 dStone = clamp(vec2(dFdx(stoneHeight), dFdy(stoneHeight)), vec2(-0.32), vec2(0.32));
+         vec3 dPxS = dFdx(vViewPosition);
+         vec3 dPyS = dFdy(vViewPosition);
+         vec3 r1S = cross(dPyS, normal);
+         vec3 r2S = cross(normal, dPxS);
+         float detS = dot(dPxS, r1S);
+         float stoneEdgeGuard = step(1e-10, abs(detS)) * step(dot(dPxS, dPxS) + dot(dPyS, dPyS), 0.0042);
+         vec3 surfGradS = sign(detS) * (dStone.x * r1S + dStone.y * r2S);
+         normal = normalize(abs(detS) * normal - surfGradS * (0.0038 * stoneEdgeGuard * (1.0 - uInkMix * 0.65)));`
+      );
+  };
+  mat.customProgramCacheKey = () => (isHover ? 'stone-hover-v4' : 'stone-base-v4');
+  return mat;
+}
+
+const cedarMat = createCedarMaterial(false);
+const cedarHoverMat = createCedarMaterial(true);
+const tileMat = createGlazedTileMaterial(false);
+const tileHoverMat = createGlazedTileMaterial(true);
+const stoneMat = createPlinthStoneMaterial(false);
+const stoneHoverMat = createPlinthStoneMaterial(true);
+
+const bronzeMat = new THREE.MeshStandardMaterial({ color: '#5C4D38', roughness: 0.32, metalness: 0.78 });
+const bronzeHoverMat = new THREE.MeshStandardMaterial({
+  color: '#8C7450', roughness: 0.26, metalness: 0.82, emissive: '#4A381C', emissiveIntensity: 0.5
+});
+
+// ============================================================================
+// 7. WET BLUESTONE MIRROR REFLECTION, PCSS FLOOR SHADOWS & ORGANIC RIPPLES
+// ============================================================================
+const rtReflectCourtyard = new THREE.WebGLRenderTarget(1280, 720, {
+  type: THREE.HalfFloatType,
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter,
+  depthBuffer: true,
+  samples: 4
+});
+const rtReflectDeck = new THREE.WebGLRenderTarget(640, 640, {
+  type: THREE.HalfFloatType,
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter,
+  depthBuffer: true,
+  samples: 4
+});
+
+const reflectCam = new THREE.PerspectiveCamera();
+const reflectMatrixCourtyard = new THREE.Matrix4();
+const reflectMatrixDeck = new THREE.Matrix4();
+const moonShadowMatrixUniform = new THREE.Matrix4();
+
+const RIPPLE_CENTERS = [
+  new THREE.Vector2( 2.34,  2.34),
+  new THREE.Vector2(-2.34,  2.34),
+  new THREE.Vector2(-2.34, -2.34),
+  new THREE.Vector2( 2.34, -2.34),
+  new THREE.Vector2( 0.00,  2.13),
+  new THREE.Vector2( 1.05,  2.18),
+  new THREE.Vector2(-1.05,  2.18),
+  new THREE.Vector2( 2.13,  0.00),
+  new THREE.Vector2( 2.18,  1.05),
+  new THREE.Vector2( 2.18, -1.05),
+  new THREE.Vector2( 0.00, -2.13),
+  new THREE.Vector2( 1.05, -2.18),
+  new THREE.Vector2(-1.05, -2.18),
+  new THREE.Vector2(-2.13,  0.00),
+  new THREE.Vector2(-2.18,  1.05),
+  new THREE.Vector2(-2.18, -1.05)
+];
+
+const GROVE_ANCHORS = [
+  new THREE.Vector2(-3.95, -2.75),
+  new THREE.Vector2( 3.85, -3.85),
+  new THREE.Vector2(-3.55,  3.25)
+];
+
+function createWetReflectiveFloorMaterial(reflectRT, reflectVPMat, isDeck = false) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: sharedUniforms.uTime,
+      uInkMix: sharedUniforms.uInkMix,
+      tReflect: { value: reflectRT.texture },
+      uReflectMatrix: { value: reflectVPMat },
+      tMoonShadow: { value: fallbackShadowTex },
+      uMoonShadowMatrix: { value: moonShadowMatrixUniform },
+      uShadowReady: { value: 0.0 },
+      uCamPos: { value: camera.position },
+      uLanternPos: { value: lanternLight.position },
+      uRipples: { value: RIPPLE_CENTERS },
+      uGroves: { value: GROVE_ANCHORS },
+      uIsDeck: { value: isDeck ? 1.0 : 0.0 }
+    },
+    vertexShader: `
+      uniform mat4 uReflectMatrix;
+      uniform mat4 uMoonShadowMatrix;
+      varying vec3 vWorldPos;
+      varying vec4 vReflectClip;
+      varying vec4 vMoonShadowCoord;
+      void main() {
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vWorldPos = wp.xyz;
+        vReflectClip = uReflectMatrix * wp;
+        vMoonShadowCoord = uMoonShadowMatrix * vec4(wp.xyz + vec3(0.0, 0.015, 0.0), 1.0);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `,
+    fragmentShader: `
+      #include <packing>
+      uniform float uTime;
+      uniform float uInkMix;
+      uniform sampler2D tReflect;
+      uniform sampler2D tMoonShadow;
+      uniform float uShadowReady;
+      uniform vec3 uCamPos;
+      uniform vec3 uLanternPos;
+      uniform vec2 uRipples[16];
+      uniform vec2 uGroves[3];
+      uniform float uIsDeck;
+
+      varying vec3 vWorldPos;
+      varying vec4 vReflectClip;
+      varying vec4 vMoonShadowCoord;
+
+      float hash21(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+      }
+
+      vec2 hash22(vec2 p) {
+        vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
+        p3 += dot(p3, p3.yzx + 33.33);
+        return fract((p3.xx + p3.yz) * p3.zy);
+      }
+
+      float noise2(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+          mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x),
+          f.y
+        );
+      }
+
+      float fbm2(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        for (int i = 0; i < 4; i++) {
+          v += a * noise2(p);
+          p = p * 2.04 + vec2(7.1, -11.3);
+          a *= 0.5;
+        }
+        return v;
+      }
+
+      float sampleFloorPCSS(vec4 shadowCoord) {
+        vec3 sc = shadowCoord.xyz / max(shadowCoord.w, 1e-4);
+        sc.z -= 0.00055;
+        float readyMask = step(0.5, uShadowReady);
+        float inZ = step(0.0, sc.z) * step(sc.z, 1.0);
+        float edgeDist = min(min(sc.x, 1.0 - sc.x), min(sc.y, 1.0 - sc.y));
+        float borderFade = smoothstep(0.02, 0.22, edgeDist) * inZ * readyMask;
+
+        vec2 texel = vec2(1.0 / 2048.0);
+        float ign = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))) * 6.2831853;
+        float ca = cos(ign), sa = sin(ign);
+        mat2 rot = mat2(ca, -sa, sa, ca);
+
+        // Uniform control flow (zero early return before texture2D -> zero HLSL X3595 gradient warnings!)
+        float bSum = 0.0, bCnt = 0.0;
+        for (int i = 0; i < 8; i++) {
+          float fi = float(i);
+          float r = sqrt((fi + 0.5) / 8.0) * 14.0;
+          float th = fi * 2.3999632;
+          vec2 uv = clamp(sc.xy + (rot * vec2(cos(th), sin(th))) * texel * r, 0.001, 0.999);
+          float d = unpackRGBAToDepth(texture2D(tMoonShadow, uv));
+          float blk = step(d, sc.z);
+          bSum += d * blk;
+          bCnt += blk;
+        }
+        float hasBlocker = step(0.5, bCnt);
+        float avgB = bSum / max(bCnt, 1.0);
+        // Wide rain-mist contact-hardening penumbra: crisp near column bases, softly diffused for high eaves
+        float penumbra = mix(1.8, clamp((sc.z - avgB) / max(avgB, 0.03) * 48.0, 1.6, 18.0), hasBlocker);
+        float lit = 0.0;
+        for (int j = 0; j < 12; j++) {
+          float fj = float(j);
+          float r = sqrt((fj + 0.5) / 12.0) * penumbra;
+          float th = fj * 2.3999632 + 1.0472;
+          vec2 uv = clamp(sc.xy + (rot * vec2(cos(th), sin(th))) * texel * r, 0.001, 0.999);
+          float d = unpackRGBAToDepth(texture2D(tMoonShadow, uv));
+          lit += step(sc.z, d);
+        }
+        float rawShadow = mix(1.0, lit / 12.0, hasBlocker);
+        return mix(1.0, rawShadow, borderFade);
+      }
+
+      void evalOrganicRippleGrid(vec2 xz, float scale, float seedShift, float puddleMask, inout vec2 rippleGrad, inout float rippleFoam) {
+        vec2 gUv = xz * scale + vec2(seedShift * 3.7, -seedShift * 2.3);
+        vec2 cell = floor(gUv);
+        vec2 local = fract(gUv) - 0.5;
+        vec2 rnd2 = hash22(cell + seedShift * 19.1);
+        // Gate active cells and jitter impact position organically inside cell (zero checkerboard alignment!)
+        if (rnd2.x > 0.32) {
+          vec2 dropCenter = (rnd2 - 0.5) * 0.54;
+          vec2 delta = local - dropCenter;
+          float rr = length(delta);
+          float period = 0.52 + rnd2.y * 0.45;
+          float rawCycle = uTime * period + rnd2.x * 11.3;
+          float cycleIdx = floor(rawCycle);
+          float activeGate = step(0.38, hash21(cell + cycleIdx * 7.13));
+          float ph = fract(rawCycle);
+          float maxRad = 0.34;
+          float ringR = ph * maxRad;
+          float env = exp(-abs(rr - ringR) * 34.0) * (1.0 - ph) * (1.0 - ph) * activeGate * puddleMask;
+          rippleGrad += normalize(delta + vec2(1e-4)) * sin((rr - ringR) * 82.0) * env * 0.44;
+          rippleFoam += max(0.0, cos((rr - ringR) * 62.0)) * env * 0.24;
+        }
+      }
+
+      void main() {
+        vec2 xz = vWorldPos.xz;
+        float distOrigin = length(xz);
+
+        float slabScale = uIsDeck > 0.5 ? 1.54 : 1.05;
+        vec2 slabUV = xz * slabScale;
+        vec2 cellId = floor(slabUV);
+        if (uIsDeck < 0.5 && mod(cellId.y, 2.0) > 0.5) {
+          slabUV.x += 0.5;
+          cellId = floor(slabUV);
+        }
+        vec2 gv = abs(fract(slabUV) - 0.5);
+        float mortar = smoothstep(0.478, 0.494, max(gv.x, gv.y));
+        float slabTone = 0.90 + 0.18 * hash21(cellId);
+        float microGrain = noise2(xz * 26.0);
+
+        float puddleNoise = fbm2(xz * 0.58 + vec2(1.4, -0.8));
+        float cornerPuddleBoost = 0.0;
+        if (uIsDeck < 0.5) {
+          for (int c = 0; c < 4; c++) {
+            cornerPuddleBoost += exp(-length(xz - uRipples[c]) * 1.45) * 0.32;
+          }
+          // Gentle foreground rainwater depression across the southern courtyard so the #FF9A3C palace lantern reflection gleams clearly
+          float frontPool = exp(-pow((distOrigin - 8.2) / 3.4, 2.0)) * smoothstep(2.0, 5.5, xz.y) * 0.34;
+          cornerPuddleBoost += frontPool;
+        }
+        float puddleMask = uIsDeck > 0.5
+          ? smoothstep(0.28, 0.54, puddleNoise + 0.18)
+          : smoothstep(0.24, 0.52, puddleNoise + 0.18 * exp(-distOrigin * 0.07) + cornerPuddleBoost);
+
+        vec2 rippleGrad = vec2(0.0);
+        float rippleFoam = 0.0;
+        if (uIsDeck < 0.5) {
+          for (int i = 0; i < 16; i++) {
+            bool isCorner = (i < 4);
+            float rate = isCorner ? 1.05 : 0.68;
+            float maxR = isCorner ? 0.96 : 0.55;
+            vec2 d = xz - uRipples[i];
+            float r = length(d);
+            if (r < maxR + 0.14) {
+              // Dual nested capillary wave trains at the 4 eave corners (uniform 2-step loop)
+              for (int tr = 0; tr < 2; tr++) {
+                float trWeight = (tr == 0) ? 1.0 : (isCorner ? 0.85 : 0.0);
+                float phase = fract(uTime * rate + float(i) * 0.193 + float(tr) * 0.5);
+                float ringR = phase * maxR;
+                float band = r - ringR;
+                float env = exp(-abs(band) * (isCorner ? 22.0 : 26.0)) * (1.0 - phase) * (1.0 - phase) * trWeight;
+                float wave = sin(band * 66.0) * env * (isCorner ? 1.25 : 0.85);
+                rippleGrad += normalize(d + vec2(1e-4)) * wave;
+                rippleFoam += max(0.0, cos(band * 52.0)) * env * (isCorner ? 0.88 : 0.52);
+              }
+            }
+          }
+          evalOrganicRippleGrid(xz, 1.65, 1.0, puddleMask, rippleGrad, rippleFoam);
+          evalOrganicRippleGrid(xz + vec2(0.31, 0.19), 2.35, 2.0, puddleMask, rippleGrad, rippleFoam);
+        } else {
+          float w = sin(xz.x * 14.0 + uTime * 2.2) * cos(xz.y * 14.0 - uTime * 1.8) * 0.014;
+          rippleGrad += vec2(w, -w) * puddleMask;
+        }
+
+        float moonShadow = sampleFloorPCSS(vMoonShadowCoord);
+
+        vec3 N = normalize(vec3(-rippleGrad.x * 0.35, 1.0, -rippleGrad.y * 0.35));
+        vec3 V = normalize(uCamPos - vWorldPos);
+        float NoV = max(dot(N, V), 0.02);
+        float fresnel = 0.06 + 0.94 * pow(1.0 - NoV, 4.0);
+
+        vec2 reflUV = (vReflectClip.xy / max(vReflectClip.w, 0.001)) * 0.5 + 0.5;
+        vec2 warpedUV = clamp(reflUV + rippleGrad * (0.036 * (1.0 - uInkMix * 0.75)) + (1.0 - puddleMask) * (microGrain - 0.5) * 0.006 * (1.0 - uInkMix), 0.002, 0.998);
+        // 5-tap rotated wet-slate roughness prefilter eliminates diagonal stair-step reflection jaggies while keeping puddles mirror-crisp
+        vec2 rBlur = (uIsDeck > 0.5 ? vec2(1.0 / 640.0) : vec2(1.0 / 1280.0, 1.0 / 720.0)) * mix(1.55, 0.62, puddleMask);
+        vec3 reflCol = texture2D(tReflect, warpedUV).rgb * 0.36
+          + texture2D(tReflect, clamp(warpedUV + vec2( 0.85,  0.35) * rBlur, 0.002, 0.998)).rgb * 0.16
+          + texture2D(tReflect, clamp(warpedUV + vec2(-0.85, -0.35) * rBlur, 0.002, 0.998)).rgb * 0.16
+          + texture2D(tReflect, clamp(warpedUV + vec2(-0.35,  0.85) * rBlur, 0.002, 0.998)).rgb * 0.16
+          + texture2D(tReflect, clamp(warpedUV + vec2( 0.35, -0.85) * rBlur, 0.002, 0.998)).rgb * 0.16;
+
+        vec3 baseSlate = vec3(0.018, 0.025, 0.031) * slabTone * (1.0 - mortar * 0.45) * (0.88 + microGrain * 0.22);
+        // Mode B: Match inner terrace (deckMirrorMesh) to surrounding Song sumi-ink bluestone 压阑石/plinth tone; dissolve outer courtyard into misty Xuan scroll留白
+        float groveSlopeMask = 0.0;
+        if (uIsDeck < 0.5) {
+          for (int g = 0; g < 3; g++) {
+            float dg = length((xz - uGroves[g]) * vec2(0.85, 1.05));
+            groveSlopeMask = max(groveSlopeMask, smoothstep(1.95, 0.38, dg) * (0.55 + 0.45 * puddleNoise));
+          }
+        }
+        float inkPaperBlank = uIsDeck > 0.5 ? 0.0 : clamp(smoothstep(2.75, 7.60, distOrigin) - groveSlopeMask * 0.88, 0.0, 1.0);
+        // Subtle Song waterside ink-ripple brushwork (远水烟波) before dissolving seamlessly into #EAE3D2 Xuan paper
+        float waterBrushWave = sin(xz.x * 2.4 + sin(xz.y * 1.7) * 1.2) * cos(xz.y * 4.8 + puddleNoise * 3.0);
+        float inkWaterLines = smoothstep(0.76, 0.95, waterBrushWave) * smoothstep(11.5, 3.4, distOrigin) * 0.10;
+        vec3 inkPaperGround = vec3(0.90, 0.86, 0.77) - vec3(0.18, 0.17, 0.16) * inkWaterLines;
+
+        vec3 inkDeckStone = pow(vec3(0.298, 0.306, 0.308), vec3(2.2)) * (0.94 + 0.10 * slabTone) * (1.0 - mortar * 0.24);
+        vec3 inkCourtStone = mix(
+          vec3(0.32, 0.34, 0.34) * slabTone * (1.0 - mortar * 0.18),
+          vec3(0.22, 0.28, 0.27) * (0.90 + 0.16 * puddleNoise),
+          groveSlopeMask * 0.82
+        );
+        vec3 inkSlate = uIsDeck > 0.5 ? inkDeckStone : mix(inkCourtStone, inkPaperGround, inkPaperBlank);
+        vec3 stoneAlbedo = mix(baseSlate, inkSlate, uInkMix);
+
+        vec3 toLantern = uLanternPos - vWorldPos;
+        float lDist = length(toLantern);
+        vec3 L = toLantern / max(lDist, 0.01);
+        float atten = 1.0 / (1.0 + 0.11 * lDist + 0.052 * lDist * lDist);
+        vec3 warmLight = vec3(1.0, 0.58, 0.20) * max(dot(N, L), 0.0) * atten * (uIsDeck > 0.5 ? 3.0 : 1.9);
+
+        vec3 H = normalize(L + V);
+        float specPow = mix(34.0, 220.0, puddleMask);
+        float spec = pow(max(dot(N, H), 0.0), specPow) * mix(0.22, 1.95, puddleMask);
+        vec3 warmSpec = vec3(1.0, 0.60, 0.23) * spec * atten * (uIsDeck > 0.5 ? 3.8 : 2.35);
+
+        vec3 moonDir = normalize(vec3(-6.8, 12.2, 8.2));
+        vec3 Hm = normalize(moonDir + V);
+        float moonSpec = pow(max(dot(N, Hm), 0.0), mix(24.0, 140.0, puddleMask)) * mix(0.10, 0.55, puddleMask) * moonShadow;
+
+        // Overcast rain-night sky diffuse dominates over direct moon so roof shadow is atmospheric rather than a harsh dark rectangle
+        vec3 ambientPlusMoon = vec3(0.42, 0.58, 0.70) + vec3(0.34, 0.46, 0.56) * moonShadow;
+        vec3 dampMoonSheen = vec3(0.008, 0.013, 0.018) * moonShadow * (1.0 - puddleMask * 0.45);
+        // Matched neutral-cool sumi irradiance on deckMirrorMesh so inner terrace matches surrounding 压阑石 seamlessly in Mode B!
+        vec3 inkDeckLit = stoneAlbedo * (vec3(0.56, 0.59, 0.60) + vec3(0.46, 0.48, 0.49) * moonShadow) + vec3(0.010, 0.012, 0.013);
+        vec3 inkFloorLit = uIsDeck > 0.5 ? inkDeckLit : (stoneAlbedo * mix(0.86, 1.0, moonShadow * (1.0 - inkPaperBlank) + inkPaperBlank));
+        vec3 litStone = mix(
+          stoneAlbedo * (ambientPlusMoon + warmLight) + dampMoonSheen,
+          inkFloorLit,
+          uInkMix
+        );
+        // Specular water/sky reflection is physically independent of direct moon shadow, and fades cleanly to 0 in Mode B matte Song scroll!
+        float reflStrength = mix(0.32, 0.88, puddleMask) * mix(0.48, 1.0, fresnel) * (1.0 - mortar * 0.52) * (1.0 - uInkMix);
+
+        vec3 mirrorRefl = reflCol * (1.0 + 0.18 * clamp(atten * 1.8, 0.0, 1.0) * (1.0 - uInkMix));
+        vec3 col = mix(litStone, mirrorRefl, clamp(reflStrength, 0.0, 0.88));
+        col += (warmSpec + vec3(0.42, 0.56, 0.70) * moonSpec) * (1.0 - uInkMix);
+        float inkFoamMask = uIsDeck > 0.5 ? 0.0 : (0.06 * (1.0 - inkPaperBlank));
+        col += mix(vec3(0.30, 0.42, 0.52), vec3(0.28, 0.30, 0.30), uInkMix) * rippleFoam * mix(0.40, inkFoamMask, uInkMix);
+
+        if (uIsDeck < 0.5) {
+          float edgeFade = smoothstep(10.5, 24.5, distOrigin);
+          vec3 horizonCol = mix(vec3(0.0045, 0.0095, 0.0125), vec3(0.90, 0.86, 0.77), uInkMix);
+          col = mix(col, horizonCol, max(edgeFade, uInkMix * smoothstep(7.2, 16.0, distOrigin)));
+        }
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+}
+
+// ============================================================================
+// 8. DUAL-MODE SKY & SONG DYNASTY 《千里江山图》 DISTANT MOUNTAIN DOME
+// ============================================================================
+const skyDomeMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite: false,
+  uniforms: {
+    uTime: sharedUniforms.uTime,
+    uInkMix: sharedUniforms.uInkMix
+  },
+  vertexShader: `
+    varying vec3 vWorldDir;
+    void main() {
+      vec4 wp = modelMatrix * vec4(position, 1.0);
+      vWorldDir = normalize(wp.xyz);
+      gl_Position = projectionMatrix * viewMatrix * wp;
+    }
+  `,
+  fragmentShader: `
+    uniform float uTime;
+    uniform float uInkMix;
+    varying vec3 vWorldDir;
+
+    float h11(float p) {
+      p = fract(p * 0.1031);
+      p *= p + 33.33;
+      p *= p + p;
+      return fract(p);
+    }
+
+    float n1(float x) {
+      float i = floor(x);
+      float f = fract(x);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(h11(i), h11(i + 1.0), f);
+    }
+
+    float mountainRidge(float az, float seed, float freq, float amp) {
+      float h = 0.0;
+      float a = amp;
+      float f = freq;
+      for (int i = 0; i < 4; i++) {
+        h += a * abs(n1(az * f + seed) * 2.0 - 1.0);
+        f *= 2.12;
+        a *= 0.48;
+      }
+      return h;
+    }
+
+    void main() {
+      vec3 d = normalize(vWorldDir);
+      float y = clamp(d.y, -0.2, 1.0);
+      float az = atan(d.z, d.x);
+
+      // Strictly calibrated linear radiance for deep Rain-Night #0F171A under single-gamma AgX
+      vec3 nightZenith  = vec3(0.0036, 0.0076, 0.0098); // #0F171A
+      vec3 nightHorizon = vec3(0.0092, 0.0172, 0.0222); // Misty rain horizon
+      vec3 nightSky = mix(nightHorizon, nightZenith, smoothstep(0.0, 0.54, max(y, 0.0)));
+      float moonGlow = pow(max(0.0, dot(d, normalize(vec3(-0.46, 0.62, 0.63)))), 8.0);
+      nightSky += vec3(0.012, 0.021, 0.029) * moonGlow;
+
+      float mFar = mountainRidge(az, 4.2, 2.8, 0.11) + 0.025;
+      if (y < mFar && y > -0.05) {
+        float mist = smoothstep(-0.01, mFar, y);
+        nightSky = mix(vec3(0.0046, 0.0092, 0.0120), nightSky * 0.72, mist * 0.58);
+      }
+
+      // Mode B: Song Dynasty Xuan Paper + 《千里江山图》 Mineral Azurite/Malachite Peaks (horizon unified with ground留白!)
+      vec3 paperBase = vec3(0.90, 0.86, 0.77);
+      vec3 paperTop  = vec3(0.84, 0.79, 0.69);
+      vec3 inkSky = mix(paperBase, paperTop, smoothstep(0.06, 0.75, max(y, 0.0)));
+
+      float r3 = mountainRidge(az + 0.7, 19.3, 2.3, 0.165) + 0.052;
+      float r2 = mountainRidge(az - 1.1, 8.7,  3.1, 0.118) + 0.025;
+      float r1 = mountainRidge(az + 2.3, 31.1, 4.0, 0.078) + 0.006;
+
+      if (y < r3) {
+        float t = clamp((r3 - y) / 0.13, 0.0, 1.0);
+        // Mineral 石青 crest -> 石绿 slope -> 云气留白 foot mist
+        vec3 crest3 = mix(vec3(0.12, 0.30, 0.34), vec3(0.26, 0.47, 0.41), smoothstep(0.0, 0.42, t));
+        vec3 col3 = mix(crest3, paperBase, smoothstep(0.32, 0.92, t));
+        inkSky = mix(inkSky, col3, smoothstep(0.0, 0.005, r3 - y) * 0.78);
+      }
+      if (y < r2) {
+        float t = clamp((r2 - y) / 0.095, 0.0, 1.0);
+        vec3 crest2 = mix(vec3(0.08, 0.24, 0.27), vec3(0.22, 0.42, 0.36), smoothstep(0.0, 0.40, t));
+        vec3 col2 = mix(crest2, paperBase, smoothstep(0.28, 0.88, t));
+        inkSky = mix(inkSky, col2, smoothstep(0.0, 0.005, r2 - y) * 0.86);
+      }
+      if (y < r1) {
+        float t = clamp((r1 - y) / 0.065, 0.0, 1.0);
+        vec3 col1 = mix(vec3(0.11, 0.18, 0.19), paperBase, smoothstep(0.22, 0.85, t));
+        inkSky = mix(inkSky, col1, smoothstep(0.0, 0.004, r1 - y) * 0.82);
+      }
+
+      vec3 finalSky = mix(nightSky, inkSky, uInkMix);
+      gl_FragColor = vec4(finalSky, 1.0);
+    }
+  `
+});
+
+const skyDome = new THREE.Mesh(new THREE.SphereGeometry(52, 48, 32), skyDomeMat);
+skyDome.frustumCulled = false;
+scene.add(skyDome);
+
+// ============================================================================
+// 9. CARPENTER PARAMETRIC MORTISE & TENON GEOMETRY ENGINE
+// ============================================================================
+const pavilionGroup = new THREE.Group();
+scene.add(pavilionGroup);
+
+const components = [];
+const interactiveMeshes = [];
+const alignmentSegments = [];
+
+function prepPartGeo(geo, grainAxis = 'x', seed = 1.0) {
+  const g = geo.index ? geo.toNonIndexed() : geo.clone();
+  if (!g.attributes.normal) g.computeVertexNormals();
+  const count = g.attributes.position.count;
+  if (!g.attributes.uv) {
+    g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(count * 2), 2));
+  }
+  const pos = g.attributes.position;
+  const woodArr = new Float32Array(count * 4);
+  for (let i = 0; i < count; i++) {
+    const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+    if (grainAxis === 'y') {
+      woodArr[i * 4 + 0] = y; woodArr[i * 4 + 1] = x; woodArr[i * 4 + 2] = z;
+    } else if (grainAxis === 'z') {
+      woodArr[i * 4 + 0] = z; woodArr[i * 4 + 1] = x; woodArr[i * 4 + 2] = y;
+    } else {
+      woodArr[i * 4 + 0] = x; woodArr[i * 4 + 1] = y; woodArr[i * 4 + 2] = z;
+    }
+    woodArr[i * 4 + 3] = seed;
+  }
+  g.setAttribute('aWoodCoord', new THREE.BufferAttribute(woodArr, 4));
+  return g;
+}
+
+function boxAt(w, h, d, cx, cy, cz, grainAxis = 'x', seed = 1.0) {
+  const g = new THREE.BoxGeometry(w, h, d);
+  g.translate(cx, cy, cz);
+  return prepPartGeo(g, grainAxis, seed);
+}
+
+function registerPart({
+  geo,
+  name,
+  role,
+  layer,
+  basePos = new THREE.Vector3(),
+  rotY = 0,
+  explodeVec = new THREE.Vector3(),
+  matType = 'wood',
+  dimsMm = null,
+  volumeM3 = null,
+  guideDrop = 0
+}) {
+  const matMap = {
+    wood:  { base: cedarMat,  hover: cedarHoverMat },
+    tile:  { base: tileMat,   hover: tileHoverMat },
+    stone: { base: stoneMat,  hover: stoneHoverMat },
+    bronze:{ base: bronzeMat, hover: bronzeHoverMat }
+  };
+  const pair = matMap[matType] || matMap.wood;
+  const mesh = new THREE.Mesh(geo, pair.base);
+  mesh.position.copy(basePos);
+  mesh.rotation.y = rotY;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  const sx = bb.max.x - bb.min.x;
+  const sy = bb.max.y - bb.min.y;
+  const sz = bb.max.z - bb.min.z;
+  const computedDims = dimsMm || `${Math.round(sx * 1000)} × ${Math.round(sz * 1000)} × ${Math.round(sy * 1000)} mm`;
+  const vol = volumeM3 || Math.max(0.001, sx * sy * sz * 0.65);
+
+  const rec = {
+    mesh,
+    name,
+    role,
+    layer,
+    basePos: basePos.clone(),
+    explodeVec: explodeVec.clone(),
+    baseMat: pair.base,
+    hoverMat: pair.hover,
+    dimsMm: computedDims,
+    volumeM3: vol,
+    explodable: layer > 0
+  };
+
+  mesh.userData.partRecord = rec;
+  pavilionGroup.add(mesh);
+  components.push(rec);
+  interactiveMeshes.push(mesh);
+
+  if (guideDrop > 0 && layer > 0) {
+    alignmentSegments.push({
+      rec,
+      localOffset: new THREE.Vector3(0, bb.min.y, 0),
+      dropLen: guideDrop
+    });
+  }
+  return rec;
+}
+
+function buildDouGeo({
+  topW = 0.30, botW = 0.21, totalH = 0.18, slotW = 0.11,
+  earMode = 'cross', botMortiseW = 0.082, botMortiseD = 0.055, seed = 1.0
+}) {
+  const parts = [];
+  const qiH = totalH * 0.42;
+  const pingH = totalH * 0.18;
+  const earH = totalH - qiH - pingH;
+
+  const mH = Math.min(botMortiseD, qiH * 0.85);
+  const sideCheek = (botW - botMortiseW) * 0.5;
+  if (sideCheek > 0.008) {
+    parts.push(boxAt(sideCheek, mH, botW, -(botMortiseW + sideCheek) * 0.5, mH * 0.5, 0, 'x', seed));
+    parts.push(boxAt(sideCheek, mH, botW,  (botMortiseW + sideCheek) * 0.5, mH * 0.5, 0, 'x', seed));
+    parts.push(boxAt(botMortiseW, mH, sideCheek, 0, mH * 0.5, -(botMortiseW + sideCheek) * 0.5, 'x', seed));
+    parts.push(boxAt(botMortiseW, mH, sideCheek, 0, mH * 0.5,  (botMortiseW + sideCheek) * 0.5, 'x', seed));
+  }
+
+  const steps = 3;
+  for (let s = 0; s < steps; s++) {
+    const t0 = s / steps;
+    const t1 = (s + 1) / steps;
+    const y0 = mH + (qiH - mH) * t0;
+    const y1 = mH + (qiH - mH) * t1;
+    const w0 = botW + (topW - botW) * Math.pow(t0, 1.45);
+    const w1 = botW + (topW - botW) * Math.pow(t1, 1.45);
+    const cyl = new THREE.CylinderGeometry(w1 * Math.SQRT1_2, w0 * Math.SQRT1_2, y1 - y0, 4, 1);
+    cyl.rotateY(Math.PI * 0.25);
+    cyl.translate(0, (y0 + y1) * 0.5, 0);
+    parts.push(prepPartGeo(cyl, 'x', seed));
+  }
+
+  parts.push(boxAt(topW, pingH, topW, 0, qiH + pingH * 0.5, 0, 'x', seed));
+
+  const earY = qiH + pingH + earH * 0.5;
+  const earSpan = (topW - slotW) * 0.5;
+  if (earMode === 'cross') {
+    for (const sx of [-1, 1]) {
+      for (const sz of [-1, 1]) {
+        parts.push(boxAt(earSpan, earH, earSpan, sx * (slotW + earSpan) * 0.5, earY, sz * (slotW + earSpan) * 0.5, 'x', seed));
+      }
+    }
+  } else if (earMode === 'singleX') {
+    for (const sz of [-1, 1]) {
+      parts.push(boxAt(topW, earH, earSpan, 0, earY, sz * (slotW + earSpan) * 0.5, 'x', seed));
+    }
+  } else {
+    for (const sx of [-1, 1]) {
+      parts.push(boxAt(earSpan, earH, topW, sx * (slotW + earSpan) * 0.5, earY, 0, 'z', seed));
+    }
+  }
+  return mergeGeometries(parts, false);
+}
+
+// Smooth lofted hexahedron slice [x0..x1] with optional end caps (zero internal coplanar seams!)
+function loftSliceAt(x0, x1, yb0, yb1, yt0, yt1, thick0, thick1, seed, capLeft = true, capRight = true) {
+  const hz0 = thick0 * 0.5, hz1 = thick1 * 0.5;
+  const p000 = [x0, yb0, -hz0], p001 = [x0, yb0,  hz0];
+  const p010 = [x0, yt0, -hz0], p011 = [x0, yt0,  hz0];
+  const p100 = [x1, yb1, -hz1], p101 = [x1, yb1,  hz1];
+  const p110 = [x1, yt1, -hz1], p111 = [x1, yt1,  hz1];
+  const pos = [];
+  const q = (a, b, c, d) => pos.push(...a, ...b, ...c, ...a, ...c, ...d);
+  q(p001, p101, p111, p011); // +Z front
+  q(p100, p000, p010, p110); // -Z back
+  q(p011, p111, p110, p010); // +Y top
+  q(p000, p100, p101, p001); // -Y bottom
+  if (capLeft)  q(p000, p001, p011, p010); // -X left cap
+  if (capRight) q(p101, p100, p110, p111); // +X right cap
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  return prepPartGeo(g, 'x', seed);
+}
+
+// Smooth Z-axis sloped hexahedron slice [zMin..zMax] at lateral center cx (for Song 垂带石 stair cheek stones)
+function zLoftSliceAt(cx, widthX, zA, zB, ybA, ybB, ytA, ytB, seed, capA = true, capB = true) {
+  const swap = zA > zB;
+  const z0 = swap ? zB : zA, z1 = swap ? zA : zB;
+  const yb0 = swap ? ybB : ybA, yb1 = swap ? ybA : ybB;
+  const yt0 = swap ? ytB : ytA, yt1 = swap ? ytA : ytB;
+  const c0 = swap ? capB : capA, c1 = swap ? capA : capB;
+  const hx = widthX * 0.5;
+  const p000 = [cx - hx, yb0, z0], p001 = [cx + hx, yb0, z0];
+  const p010 = [cx - hx, yt0, z0], p011 = [cx + hx, yt0, z0];
+  const p100 = [cx - hx, yb1, z1], p101 = [cx + hx, yb1, z1];
+  const p110 = [cx - hx, yt1, z1], p111 = [cx + hx, yt1, z1];
+  const pos = [];
+  // Counter-clockwise outward winding (odd X<->Z permutation relative to loftSliceAt)
+  const q = (a, b, c, d) => pos.push(...a, ...c, ...b, ...a, ...d, ...c);
+  q(p001, p101, p111, p011); // +X outer cheek
+  q(p100, p000, p010, p110); // -X inner cheek
+  q(p010, p011, p111, p110); // +Y sloped ramp top
+  q(p001, p000, p100, p101); // -Y stepped plinth seat
+  if (c0) q(p000, p001, p011, p010); // -Z cap
+  if (c1) q(p101, p100, p110, p111); // +Z cap
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  return prepPartGeo(g, 'z', seed);
+}
+
+function buildGongGeo({
+  length = 0.72, leftLen = null, rightLen = null, height = 0.17, thick = 0.108,
+  notchMode = 'top', notchW = 0.112, topSeatX = null, topSeatH = null,
+  tenonXs = [-0.30, 0.30], tenonPinSize = 0.044, tenonPinH = 0.026, seed = 2.0
+}) {
+  const parts = [];
+  const lArm = leftLen !== null ? leftLen : length * 0.5;
+  const rArm = rightLen !== null ? rightLen : length * 0.5;
+  const halfN = notchW * 0.5;
+  const flatL = Math.max(halfN + 0.028, Math.min(0.145, lArm * 0.44));
+  const flatR = Math.max(halfN + 0.028, Math.min(0.145, rArm * 0.46));
+
+  const juanshaBot = (x) => {
+    if (x < 0) {
+      const ax = -x;
+      if (ax <= flatL) return 0.0;
+      const u = Math.min(1.0, (ax - flatL) / Math.max(0.02, lArm - flatL));
+      return height * 0.46 * Math.pow(u, 1.72);
+    }
+    if (x <= flatR) return 0.0;
+    const u = Math.min(1.0, (x - flatR) / Math.max(0.02, rArm - flatR));
+    return height * 0.46 * Math.pow(u, 1.72);
+  };
+
+  const armTopY = (x) => {
+    if (topSeatX !== null && topSeatH !== null && x >= topSeatX[0] - 1e-6 && x <= topSeatX[1] + 1e-6) {
+      return topSeatH;
+    }
+    return height;
+  };
+
+  const buildArmSpan = (xStart, xEnd, topYVal, slices, capStart, capEnd) => {
+    for (let i = 0; i < slices; i++) {
+      const x0 = xStart + ((xEnd - xStart) * i) / slices;
+      const x1 = xStart + ((xEnd - xStart) * (i + 1)) / slices;
+      parts.push(loftSliceAt(
+        x0, x1, juanshaBot(x0), juanshaBot(x1), topYVal, topYVal,
+        thick, thick, seed, i === 0 ? capStart : false, i === slices - 1 ? capEnd : false
+      ));
+    }
+  };
+
+  // Left arm [-lArm .. -halfN] split cleanly at exact topSeatX[0] shoulder if present
+  if (topSeatX !== null && topSeatH !== null && topSeatX[0] > -lArm + 0.006 && topSeatX[0] < -halfN - 0.006) {
+    buildArmSpan(-lArm, topSeatX[0], height, 3, true, true);
+    buildArmSpan(topSeatX[0], -halfN, topSeatH, 4, false, true);
+  } else {
+    buildArmSpan(-lArm, -halfN, armTopY((-lArm - halfN) * 0.5), 6, true, true);
+  }
+
+  // Crisp 90° vertical-walled central mortise saddle [-halfN .. +halfN]
+  let cBot = 0.0, cTop = armTopY(0.0);
+  if (notchMode === 'top') cTop = height * 0.49;
+  else if (notchMode === 'shallowTop') cTop = cTop * 0.68;
+  else if (notchMode === 'bottom') cBot = height * 0.51;
+  parts.push(loftSliceAt(-halfN, halfN, cBot, cBot, cTop, cTop, thick, thick, seed, true, true));
+
+  // Right arm [+halfN .. +rArm] split cleanly at exact topSeatX[1] shoulder if present
+  if (topSeatX !== null && topSeatH !== null && topSeatX[1] > halfN + 0.006 && topSeatX[1] < rArm - 0.006) {
+    buildArmSpan(halfN, topSeatX[1], topSeatH, 4, true, false);
+    buildArmSpan(topSeatX[1], rArm, height, 3, true, true);
+  } else {
+    buildArmSpan(halfN, rArm, armTopY((halfN + rArm) * 0.5), 6, true, true);
+  }
+
+  for (const tx of tenonXs) {
+    const baseY = armTopY(tx);
+    parts.push(boxAt(tenonPinSize, tenonPinH, tenonPinSize, tx, baseY + tenonPinH * 0.5, 0, 'y', seed));
+  }
+  return mergeGeometries(parts, false);
+}
+
+function buildShuatouGeo({
+  backLen = 0.334, frontLen = 0.855, bevelStart = 0.635,
+  height = 0.098, thick = 0.088, tenonX = 0.575, seed = 3.0
+}) {
+  const parts = [];
+  // Rear dovetail lock tenon [-backLen .. -0.215] clearing 第二跳斜华拱 -0.340m rear shoulder wall by 6mm
+  const xDove = -0.215;
+  parts.push(loftSliceAt(-backLen, xDove, 0.003, 0.003, height * 0.88, height * 0.88, thick * 0.88, thick * 0.62, seed, true, false));
+  // Full-flat bearing body [xDove .. bevelStart] carrying 撩檐槫 clearance & 耍头齐心交互斗 at tenonX
+  parts.push(loftSliceAt(xDove, bevelStart, 0.0, 0.0, height, height, thick, thick, seed, true, false));
+  // Downward central lock tongue [-0.041 .. +0.041] socketing cleanly into 第二跳斜华拱 central mortise (4mm clearance all around)
+  parts.push(boxAt(0.082, 0.026, thick * 0.88, 0.0, -0.013, 0, 'x', seed));
+  // Smooth Song 批竹耍头 sharp 45° diagonal slice + curved lower chin [bevelStart .. frontLen]
+  for (let i = 0; i < 6; i++) {
+    const u0 = i / 6, u1 = (i + 1) / 6;
+    const x0 = bevelStart + (frontLen - bevelStart) * u0;
+    const x1 = bevelStart + (frontLen - bevelStart) * u1;
+    const yt0 = height * (1.0 - 0.78 * Math.pow(u0, 1.08));
+    const yt1 = height * (1.0 - 0.78 * Math.pow(u1, 1.08));
+    const yb0 = height * 0.22 * Math.pow(u0, 1.70);
+    const yb1 = height * 0.22 * Math.pow(u1, 1.70);
+    parts.push(loftSliceAt(x0, x1, yb0, yb1, yt0, yt1, thick * (1.0 - 0.08 * u0), thick * (1.0 - 0.08 * u1), seed, false, i === 5));
+  }
+  // Top pin at tenonX (on flat top before bevelStart!) engaging 耍头齐心交互斗 bottom mortise
+  parts.push(boxAt(0.040, 0.024, 0.040, tenonX, height + 0.012, 0, 'y', seed));
+  return mergeGeometries(parts, false);
+}
+
+function buildSuozhuColumnGeo(sxSign, szSign, seed = 5.0) {
+  const parts = [];
+  const baseR = 0.130, topR = 0.118, shaftH = 2.060, headH = 0.180;
+  const colSeed = -Math.abs(seed); // Negative flag selects heartwood column cut in cedar shader
+
+  parts.push(boxAt(0.072, 0.054, 0.072, 0, -0.027, 0, 'y', colSeed));
+
+  const rings = 8;
+  for (let i = 0; i < rings; i++) {
+    const t0 = i / rings, t1 = (i + 1) / rings;
+    const y0 = shaftH * t0, y1 = shaftH * t1;
+    const rOf = (t) => (t < 0.62 ? baseR : baseR - (baseR - topR) * Math.pow((t - 0.62) / 0.38, 1.55));
+    const cyl = new THREE.CylinderGeometry(rOf(t1), rOf(t0), y1 - y0, 20, 1);
+    cyl.translate(0, (y0 + y1) * 0.5, 0);
+    parts.push(prepPartGeo(cyl, 'y', colSeed));
+  }
+
+  // Exact 112mm cruciform column-head mortise slot (accommodates 110mm Lan'e with 1mm fit clearance per side)
+  const slotHalf = 0.056;
+  const cheekW = 0.048;
+  const cheekCenter = slotHalf + cheekW * 0.5;
+  for (const qx of [-1, 1]) {
+    for (const qz of [-1, 1]) {
+      parts.push(boxAt(cheekW, headH, cheekW, qx * cheekCenter, shaftH + headH * 0.5, qz * cheekCenter, 'y', colSeed));
+    }
+  }
+  // Outer blind plugs sealing exterior faces of column head beyond dovetail tenon tips
+  parts.push(boxAt(0.034, headH, slotHalf * 1.96, sxSign * (topR - 0.019), shaftH + headH * 0.5, 0, 'y', colSeed));
+  parts.push(boxAt(slotHalf * 1.96, headH, 0.034, 0, shaftH + headH * 0.5, szSign * (topR - 0.019), 'y', colSeed));
+
+  // Continuous heartwood 馒头榫 core extending from solid shaft (2.060m) through column head up to 2.402m (zero floating core!)
+  const mantou = new THREE.CylinderGeometry(0.042, 0.050, headH + 0.162, 4, 1);
+  mantou.rotateY(Math.PI * 0.25);
+  mantou.translate(0, shaftH + (headH + 0.162) * 0.5, 0);
+  parts.push(prepPartGeo(mantou, 'y', colSeed));
+  return mergeGeometries(parts, false);
+}
+
+function eaveOutwardExtent(absS) {
+  return 2.120 + 0.220 * Math.pow(Math.min(1.0, absS), 2.15);
+}
+
+function roofSurfaceY(x, z) {
+  const ax = Math.abs(x), az = Math.abs(z);
+  const p = Math.max(ax, az), q = Math.min(ax, az);
+  const s = p > 1e-4 ? q / p : 0.0;
+  const u = p / 2.120;
+  const sagF = 1.42 * u - 0.42 * Math.pow(Math.max(u, 0.0), 1.85);
+  const yBase = 4.960 - 1.540 * sagF;
+  const liftProgress = Math.max(0.0, (p - 0.680) / (2.340 - 0.680));
+  const yLift = 0.520 * Math.pow(liftProgress, 2.10) * Math.pow(s, 2.15);
+  return yBase + yLift;
+}
+
+// ============================================================================
+// 10. ASSEMBLE SONG DYNASTY PAVILION (L0 -> L12)
+// ============================================================================
+const CORNERS = [
+  { label: '东南', sx:  1, sz:  1 },
+  { label: '西南', sx: -1, sz:  1 },
+  { label: '西北', sx: -1, sz: -1 },
+  { label: '东北', sx:  1, sz: -1 }
+];
+
+// L0: Grounded Three-Tier Bluestone Plinth & Carved Column Bases
+{
+  const buildChamferedSlabGeo = (width, yBot, yTop, bevel, seed) => {
+    const h = yTop - yBot;
+    const bodyH = h - bevel;
+    const body = boxAt(width, bodyH, width, 0, yBot + bodyH * 0.5, 0, 'x', seed);
+    const cap = new THREE.CylinderGeometry((width - bevel * 2.0) * Math.SQRT1_2, width * Math.SQRT1_2, bevel, 4, 1);
+    cap.rotateY(Math.PI * 0.25);
+    cap.translate(0, yTop - bevel * 0.5, 0);
+    return mergeGeometries([body, prepPartGeo(cap, 'x', seed)], false);
+  };
+
+  registerPart({
+    geo: buildChamferedSlabGeo(5.10, 0.000, 0.160, 0.008, 1),
+    name: '台基 · 下阶土衬石', role: '基座层 · 贴地承重青石须弥座底阶',
+    layer: 0, matType: 'stone', dimsMm: '5100 × 5100 × 160 mm'
+  });
+  registerPart({
+    geo: buildChamferedSlabGeo(4.50, 0.160, 0.320, 0.008, 2),
+    name: '台基 · 中阶条石', role: '基座层 · 二层收分整砌青石阶',
+    layer: 0, matType: 'stone', dimsMm: '4500 × 4500 × 160 mm'
+  });
+  registerPart({
+    geo: buildChamferedSlabGeo(3.90, 0.320, 0.478, 0.008, 3),
+    name: '台基 · 上阶台明基石', role: '基座层 · 亭心台明承托石坪',
+    layer: 0, matType: 'stone', dimsMm: '3900 × 3900 × 158 mm'
+  });
+
+  // Flush perimeter 压阑石 curbs seated at y = 0.478..0.504 m (with recessed stair threshold on South/North)
+  [
+    { n: '南面压阑石', z:  1.89, isStairFace: true },
+    { n: '北面压阑石', z: -1.89, isStairFace: true },
+    { n: '东面压阑石', x:  1.89, isStairFace: false },
+    { n: '西面压阑石', x: -1.89, isStairFace: false }
+  ].forEach((c, idx) => {
+    let curbGeo;
+    if (c.isStairFace) {
+      curbGeo = mergeGeometries([
+        boxAt(1.208, 0.026, 0.12, -1.346, 0.491, c.z, 'x', 10 + idx),
+        boxAt(1.208, 0.026, 0.12,  1.346, 0.491, c.z, 'x', 10 + idx),
+        boxAt(1.484, 0.006, 0.12,  0.000, 0.481, c.z, 'x', 10 + idx)
+      ], false);
+    } else {
+      curbGeo = boxAt(0.12, 0.026, 3.656, c.x, 0.491, 0, 'z', 10 + idx);
+    }
+    registerPart({
+      geo: curbGeo,
+      name: `台基 · ${c.n}`, role: '基座层 · 台明边缘锁口条石', layer: 0, matType: 'stone'
+    });
+  });
+
+  // Authentic Song 三出陛垂带踏跺: non-intersecting stepped treads + sloped 垂带石 cheek stones & 象眼 spandrels
+  for (const dir of [{ name: '南面', sz: 1 }, { name: '北面', sz: -1 }]) {
+    const s = dir.sz;
+    const rampTop = (absZ) => 0.504 - (0.504 - 0.178) * ((absZ - 1.952) / (2.890 - 1.952));
+    const stairParts = [
+      // 3 stepped bluestone treads seated cleanly on courtyard (y=0.000), 下阶 (y=0.160), and 中阶 (y=0.320)
+      boxAt(1.48, 0.160, 0.318, 0, 0.080,  s * 2.711, 'x', 4),
+      boxAt(1.48, 0.159, 0.296, 0, 0.2405, s * 2.400, 'x', 5),
+      boxAt(1.48, 0.157, 0.296, 0, 0.3995, s * 2.100, 'x', 6)
+    ];
+    for (const cxCheek of [-0.812, 0.812]) {
+      // Sloped 垂带石 cheek stone + stepped 象眼 underside seated strictly on y=0.321, y=0.161, y=0.000
+      stairParts.push(
+        zLoftSliceAt(cxCheek, 0.140, s * 1.952, s * 2.252, 0.321, 0.321, rampTop(1.952), rampTop(2.252), 7, true, true),
+        zLoftSliceAt(cxCheek, 0.140, s * 2.252, s * 2.552, 0.161, 0.161, rampTop(2.252), rampTop(2.552), 7, true, true),
+        zLoftSliceAt(cxCheek, 0.140, s * 2.552, s * 2.890, 0.000, 0.000, rampTop(2.552), rampTop(2.890), 8, true, true)
+      );
+    }
+    registerPart({
+      geo: mergeGeometries(stairParts, false),
+      name: `台基 · ${dir.name}三出陛踏跺`, role: '基座层 · 斜坡垂带石与三级踏道石阶', layer: 0, matType: 'stone'
+    });
+  }
+
+  CORNERS.forEach((c, idx) => {
+    const p = [];
+    p.push(boxAt(0.40, 0.048, 0.40, 0, 0.024, 0, 'x', 20 + idx));
+    const mW = 0.078, outerW = 0.28, cheek = (outerW - mW) * 0.5;
+    p.push(boxAt(cheek, 0.072, outerW, -(mW + cheek) * 0.5, 0.084, 0, 'x', 20 + idx));
+    p.push(boxAt(cheek, 0.072, outerW,  (mW + cheek) * 0.5, 0.084, 0, 'x', 20 + idx));
+    p.push(boxAt(mW, 0.072, cheek, 0, 0.084, -(mW + cheek) * 0.5, 'x', 20 + idx));
+    p.push(boxAt(mW, 0.072, cheek, 0, 0.084,  (mW + cheek) * 0.5, 'x', 20 + idx));
+    const ring = new THREE.TorusGeometry(0.165, 0.026, 10, 24);
+    ring.rotateX(Math.PI * 0.5);
+    ring.translate(0, 0.066, 0);
+    p.push(prepPartGeo(ring, 'x', 20 + idx));
+
+    registerPart({
+      geo: mergeGeometries(p, false),
+      name: `${c.label} · 覆盆柱础`,
+      role: '基座层 · 雕花石础（中心凿 78mm 管脚卯口）',
+      layer: 0, basePos: new THREE.Vector3(c.sx * 1.320, 0.480, c.sz * 1.320),
+      matType: 'stone', dimsMm: '400 × 400 × 120 mm'
+    });
+  });
+}
+
+// L1: Four Song Entasis Columns (pure vertical plumb-axis lift out of 管脚卯口)
+CORNERS.forEach((c, idx) => {
+  registerPart({
+    geo: buildSuozhuColumnGeo(c.sx, c.sz, 31.7 + idx * 5.3),
+    name: `${c.label}转角 · 宋式梭柱`,
+    role: '第一层 · 柱网层（下出管脚榫，上开十字卯口与馒头榫）',
+    layer: 1, basePos: new THREE.Vector3(c.sx * 1.320, 0.600, c.sz * 1.320),
+    explodeVec: new THREE.Vector3(0, 0.14, 0),
+    matType: 'wood', dimsMm: 'Ø260 × 2456 mm', guideDrop: 0.16
+  });
+});
+
+// L2: Four Lan'e Architraves (Complementary Half-Lap Dovetail Tenons — 4.6mm clear of central 馒头榫 core during vertical lift!)
+{
+  const buildLanEGeo = (keepTopHalf, seed) => {
+    const h = 0.180, halfH = 0.090;
+    const p = [boxAt(2.432, h, 0.108, 0, halfH, 0, 'x', seed)];
+    const lapY0 = keepTopHalf ? (halfH + 0.002) : 0.008;
+    const lapY1 = keepTopHalf ? (h - 0.008) : (halfH - 0.002);
+    for (const dir of [-1, 1]) {
+      p.push(loftSliceAt(dir * 1.216, dir * 1.246, lapY0, lapY0, lapY1, lapY1, 0.078, 0.078, seed, false, false));
+      const xA = dir > 0 ? 1.246 : -1.280;
+      const xB = dir > 0 ? 1.280 : -1.246;
+      const wA = dir > 0 ? 0.078 : 0.104;
+      const wB = dir > 0 ? 0.104 : 0.078;
+      p.push(loftSliceAt(xA, xB, lapY0, lapY0, lapY1, lapY1, wA, wB, seed, dir < 0, dir > 0));
+    }
+    return mergeGeometries(p, false);
+  };
+
+  [
+    { label: '东面', top: false, pos: [ 1.320, 2.660, 0], rot: Math.PI * 0.5, exp: [0, 0.42, 0] },
+    { label: '西面', top: false, pos: [-1.320, 2.660, 0], rot: Math.PI * 0.5, exp: [0, 0.42, 0] },
+    { label: '南面', top: true,  pos: [0, 2.660,  1.320], rot: 0,             exp: [0, 0.58, 0] },
+    { label: '北面', top: true,  pos: [0, 2.660, -1.320], rot: 0,             exp: [0, 0.58, 0] }
+  ].forEach((w, i) => {
+    registerPart({
+      geo: buildLanEGeo(w.top, 42.1 + i * 3.7),
+      name: `${w.label} · 阑额`,
+      role: `第二层 · 柱头联结枋（两端${w.top ? '刻下口' : '刻上口'}燕尾半榫十字咬合入柱头卯口）`,
+      layer: 2, basePos: new THREE.Vector3(...w.pos), rotY: w.rot,
+      explodeVec: new THREE.Vector3(...w.exp), matType: 'wood', dimsMm: '2760 × 110 × 180 mm'
+    });
+  });
+}
+
+// L3: Four Pupai-fang Flat Tie-Beams (pure vertical lift off 馒头榫)
+{
+  const buildPupaiGeo = (keepTopHalfAtCorner, seed) => {
+    const p = [];
+    const h = 0.100, w = 0.220, halfH = h * 0.5;
+    p.push(boxAt(2.416, h, w, 0, halfH, 0, 'x', seed));
+    const lapH = halfH - 0.002;
+    const lapY = keepTopHalfAtCorner ? (halfH + 0.001 + lapH * 0.5) : (0.001 + lapH * 0.5);
+    const holeHalf = 0.056;
+    for (const s of [-1, 1]) {
+      p.push(boxAt(0.056, lapH, w, s * 1.236, lapY, 0, 'x', seed));
+      p.push(boxAt(0.084, lapH, w, s * 1.418, lapY, 0, 'x', seed));
+      const sideZ = (w - holeHalf * 2.0) * 0.5;
+      p.push(boxAt(holeHalf * 2.0, lapH, sideZ, s * 1.320, lapY, -(holeHalf + sideZ * 0.5), 'x', seed));
+      p.push(boxAt(holeHalf * 2.0, lapH, sideZ, s * 1.320, lapY,  (holeHalf + sideZ * 0.5), 'x', seed));
+    }
+    return mergeGeometries(p, false);
+  };
+
+  [
+    { label: '东面', top: false, pos: [ 1.320, 2.840, 0], rot: Math.PI * 0.5, exp: [0, 0.78, 0] },
+    { label: '西面', top: false, pos: [-1.320, 2.840, 0], rot: Math.PI * 0.5, exp: [0, 0.78, 0] },
+    { label: '南面', top: true,  pos: [0, 2.840,  1.320], rot: 0,             exp: [0, 0.94, 0] },
+    { label: '北面', top: true,  pos: [0, 2.840, -1.320], rot: 0,             exp: [0, 0.94, 0] }
+  ].forEach((d, i) => {
+    registerPart({
+      geo: buildPupaiGeo(d.top, 55.4 + i * 4.1),
+      name: `${d.label} · 普拍枋`,
+      role: `第三层 · 平坐铺作垫枋（转角${d.top ? '刻下口' : '刻上口'}十字搭交 + 馒头榫卯眼）`,
+      layer: 3, basePos: new THREE.Vector3(...d.pos), rotY: d.rot,
+      explodeVec: new THREE.Vector3(...d.exp), matType: 'wood', dimsMm: '2920 × 220 × 100 mm'
+    });
+  });
+}
+
+// L4-L8: Four Corner Dougong Bracket Sets (4 × 17 = 68 precision zero-interpenetration mortise-tenon meshes)
+CORNERS.forEach((c, cIdx) => {
+  const cx = c.sx * 1.320, cz = c.sz * 1.320;
+  const seedBase = 70.0 + cIdx * 23.0;
+  const diagRotY = Math.atan2(-c.sz, c.sx);
+
+  // L4 栌斗: y = 2.940..3.120 m, trough floor y = 3.048 m, slotW = 0.110 m
+  registerPart({
+    geo: buildDouGeo({ topW: 0.300, botW: 0.210, totalH: 0.180, slotW: 0.110, earMode: 'cross', botMortiseW: 0.084, botMortiseD: 0.068, seed: seedBase + 1 }),
+    name: `${c.label}铺作 · 栌斗`, role: '第四层 · 柱头坐斗（底凿馒头卯眼，上开四耳十字卯槽）',
+    layer: 4, basePos: new THREE.Vector3(cx, 2.940, cz),
+    explodeVec: new THREE.Vector3(0, 1.16, 0),
+    matType: 'wood', dimsMm: '300 × 300 × 180 mm', guideDrop: 0.22
+  });
+
+  // L5 第一跳华拱 & 泥道拱: seated flush on 栌斗 trough floor y = 3.048 m, top = 3.218 m (thick 106mm < slotW 110mm)
+  registerPart({
+    geo: buildGongGeo({ length: 0.720, height: 0.170, thick: 0.106, notchMode: 'top', notchW: 0.112, tenonXs: [-0.300, 0.300], tenonPinSize: 0.042, tenonPinH: 0.025, seed: seedBase + 2 }),
+    name: `${c.label}铺作 · 第一跳华拱`, role: '第五层 · 出跳弯弧拱（四瓣卷杀，中开上卡口，两端立暗销榫）',
+    layer: 5, basePos: new THREE.Vector3(cx, 3.048, cz), rotY: 0,
+    explodeVec: new THREE.Vector3(0, 1.40, 0),
+    matType: 'wood', dimsMm: '720 × 106 × 170 mm', guideDrop: 0.20
+  });
+
+  registerPart({
+    geo: buildGongGeo({ length: 0.720, height: 0.170, thick: 0.106, notchMode: 'bottom', notchW: 0.112, tenonXs: [-0.300, 0.0, 0.300], tenonPinSize: 0.042, tenonPinH: 0.025, seed: seedBase + 3 }),
+    name: `${c.label}铺作 · 泥道拱`, role: '第五层 · 正心横拱（中开下卡口与华拱十字咬合，上立三枚暗销榫）',
+    layer: 5, basePos: new THREE.Vector3(cx, 3.048, cz), rotY: Math.PI * 0.5,
+    explodeVec: new THREE.Vector3(0, 1.58, 0),
+    matType: 'wood', dimsMm: '720 × 106 × 170 mm', guideDrop: 0.20
+  });
+
+  // L6 交互斗 / 散斗 / 中心齐心斗: seated flush on L5 top y = 3.218 m, trough floor = 3.290 m, ear top = 3.338 m
+  registerPart({
+    geo: buildDouGeo({ topW: 0.160, botW: 0.114, totalH: 0.120, slotW: 0.094, earMode: 'cross', botMortiseW: 0.052, botMortiseD: 0.032, seed: seedBase + 4 }),
+    name: `${c.label}铺作 · 横向外跳交互斗`, role: '第六层 · 华拱外端承托斗（四耳十字卯槽承令拱）',
+    layer: 6, basePos: new THREE.Vector3(cx + c.sx * 0.300, 3.218, cz),
+    explodeVec: new THREE.Vector3(0, 1.82, 0),
+    matType: 'wood', dimsMm: '160 × 160 × 120 mm', guideDrop: 0.20
+  });
+
+  registerPart({
+    geo: buildDouGeo({ topW: 0.160, botW: 0.114, totalH: 0.120, slotW: 0.094, earMode: 'cross', botMortiseW: 0.052, botMortiseD: 0.032, seed: seedBase + 5 }),
+    name: `${c.label}铺作 · 纵向外跳交互斗`, role: '第六层 · 泥道外跳承托斗（四耳十字卯槽承令拱）',
+    layer: 6, basePos: new THREE.Vector3(cx, 3.218, cz + c.sz * 0.300),
+    explodeVec: new THREE.Vector3(0, 1.82, 0),
+    matType: 'wood', dimsMm: '160 × 160 × 120 mm', guideDrop: 0.20
+  });
+
+  registerPart({
+    geo: buildDouGeo({ topW: 0.148, botW: 0.106, totalH: 0.120, slotW: 0.088, earMode: 'singleZ', botMortiseW: 0.052, botMortiseD: 0.032, seed: seedBase + 6 }),
+    name: `${c.label}铺作 · 里跳横散斗`, role: '第六层 · 亭内跳头散斗（单向一字卯槽）',
+    layer: 6, basePos: new THREE.Vector3(cx - c.sx * 0.300, 3.218, cz),
+    explodeVec: new THREE.Vector3(0, 1.82, 0),
+    matType: 'wood', dimsMm: '148 × 148 × 120 mm'
+  });
+
+  registerPart({
+    geo: buildDouGeo({ topW: 0.148, botW: 0.106, totalH: 0.120, slotW: 0.088, earMode: 'singleX', botMortiseW: 0.052, botMortiseD: 0.032, seed: seedBase + 7 }),
+    name: `${c.label}铺作 · 里跳纵散斗`, role: '第六层 · 亭内跳头散斗（单向一字卯槽）',
+    layer: 6, basePos: new THREE.Vector3(cx, 3.218, cz - c.sz * 0.300),
+    explodeVec: new THREE.Vector3(0, 1.82, 0),
+    matType: 'wood', dimsMm: '148 × 148 × 120 mm'
+  });
+
+  registerPart({
+    geo: buildDouGeo({ topW: 0.162, botW: 0.116, totalH: 0.120, slotW: 0.096, earMode: 'singleX', botMortiseW: 0.068, botMortiseD: 0.032, seed: seedBase + 8 }),
+    name: `${c.label}铺作 · 中心齐心斗`, role: '第六层 · 拱心承重斗（45° 斜向卯槽承转角斜华拱）',
+    layer: 6, basePos: new THREE.Vector3(cx, 3.218, cz), rotY: diagRotY,
+    explodeVec: new THREE.Vector3(0, 1.82, 0),
+    matType: 'wood', dimsMm: '162 × 162 × 120 mm'
+  });
+
+  // L7 瓜子令拱: local origin centered directly on 交互斗 at y = 3.290 m (cBot = 0.0 flush on trough floor, thick 88mm < slotW 94mm)
+  const rotHengLing = -c.sz * Math.PI * 0.5;
+  const rotZongLing = c.sx > 0 ? 0 : Math.PI;
+  registerPart({
+    geo: buildGongGeo({ leftLen: 0.340, rightLen: 0.182, height: 0.132, thick: 0.088, notchMode: 'shallowTop', notchW: 0.094, tenonXs: [-0.275, 0.082], tenonPinSize: 0.040, tenonPinH: 0.024, seed: seedBase + 9 }),
+    name: `${c.label}铺作 · 横侧瓜子令拱`, role: '第七层 · 外檐承槫拱（正坐交互斗卯槽，托撩檐槫散斗）',
+    layer: 7, basePos: new THREE.Vector3(cx + c.sx * 0.300, 3.290, cz), rotY: rotHengLing,
+    explodeVec: new THREE.Vector3(0, 2.06, 0),
+    matType: 'wood', dimsMm: '522 × 88 × 132 mm'
+  });
+
+  registerPart({
+    geo: buildGongGeo({ leftLen: 0.340, rightLen: 0.182, height: 0.132, thick: 0.088, notchMode: 'shallowTop', notchW: 0.094, tenonXs: [-0.275, 0.082], tenonPinSize: 0.040, tenonPinH: 0.024, seed: seedBase + 10 }),
+    name: `${c.label}铺作 · 纵侧瓜子令拱`, role: '第七层 · 外檐承槫拱（正坐交互斗卯槽，托撩檐槫散斗）',
+    layer: 7, basePos: new THREE.Vector3(cx, 3.290, cz + c.sz * 0.300), rotY: rotZongLing,
+    explodeVec: new THREE.Vector3(0, 2.06, 0),
+    matType: 'wood', dimsMm: '522 × 88 × 132 mm'
+  });
+
+  // L7 第二跳斜华拱: centered at (cx, 3.290, cz) right inside 中心齐心斗 45° trough (0.0mm offset, thick 90mm < slotW 96mm)
+  // Exact split shoulder at x = -0.340 m: rear rises to y = 3.426 m while [-0.340..+0.480] forms flush 3.390 m cradle + central mortise for 批竹耍头
+  registerPart({
+    geo: buildGongGeo({
+      leftLen: 0.450, rightLen: 0.480, height: 0.136, thick: 0.090,
+      notchMode: 'shallowTop', notchW: 0.094, topSeatX: [-0.340, 0.485], topSeatH: 0.100,
+      tenonXs: [], seed: seedBase + 11
+    }),
+    name: `${c.label}铺作 · 第二跳斜华拱`, role: '第七层 · 45° 转角斜出跳拱（正坐齐心斗卯槽，上造阶梯槽承批竹耍头）',
+    layer: 7, basePos: new THREE.Vector3(cx, 3.290, cz), rotY: diagRotY,
+    explodeVec: new THREE.Vector3(0, 2.14, 0),
+    matType: 'wood', dimsMm: '930 × 90 × 136 mm', guideDrop: 0.20
+  });
+
+  // L7 批竹耍头: seated flush on 第二跳斜华拱 stepped cradle at y = 3.390..3.488 m (clears 撩檐槫 y=3.491m & carries 耍头齐心交互斗 at r=0.575m)
+  registerPart({
+    geo: buildShuatouGeo({ backLen: 0.334, frontLen: 0.855, bevelStart: 0.635, height: 0.098, thick: 0.088, tenonX: 0.575, seed: seedBase + 12 }),
+    name: `${c.label}铺作 · 批竹耍头`, role: '第七层 · 宋式斜杀批竹昂头（前削批竹尖，下出锁舌榫，后造燕尾暗榫）',
+    layer: 7, basePos: new THREE.Vector3(cx, 3.390, cz), rotY: diagRotY,
+    explodeVec: new THREE.Vector3(0, 2.34, 0),
+    matType: 'wood', dimsMm: '1189 × 88 × 124 mm', guideDrop: 0.18
+  });
+
+  // L8 令拱散斗: seated flush on 瓜子令拱 at y = 3.422 m, trough floor y = 3.491 m, slotW = 0.098 m > 撩檐槫 w = 0.092 m
+  [
+    { x: c.sx * 0.300, z: -c.sz * 0.275, ear: 'singleZ', tag: '外横前散斗' },
+    { x: c.sx * 0.300, z:  c.sz * 0.082, ear: 'singleZ', tag: '外横后散斗' },
+    { x: -c.sx * 0.275, z: c.sz * 0.300, ear: 'singleX', tag: '外纵前散斗' },
+    { x:  c.sx * 0.082, z: c.sz * 0.300, ear: 'singleX', tag: '外纵后散斗' }
+  ].forEach((so, sIdx) => {
+    registerPart({
+      geo: buildDouGeo({ topW: 0.144, botW: 0.102, totalH: 0.115, slotW: 0.098, earMode: so.ear, botMortiseW: 0.050, botMortiseD: 0.030, seed: seedBase + 13 + sIdx }),
+      name: `${c.label}铺作 · 令拱${so.tag}`, role: '第八层 · 令拱端承槫散斗（底纳暗销榫，上开 98mm 卯槽托撩檐槫）',
+      layer: 8, basePos: new THREE.Vector3(cx + so.x, 3.422, cz + so.z),
+      explodeVec: new THREE.Vector3(0, 2.58, 0),
+      matType: 'wood', dimsMm: '144 × 144 × 115 mm'
+    });
+  });
+
+  // L8 耍头齐心交互斗: seated at r = 0.575 m outside 撩檐槫 corner, y = 3.488 m, trough floor = 3.578 m cradling 老角梁!
+  const dOut = 0.575 * Math.SQRT1_2;
+  registerPart({
+    geo: buildDouGeo({ topW: 0.152, botW: 0.108, totalH: 0.150, slotW: 0.100, earMode: 'singleX', botMortiseW: 0.048, botMortiseD: 0.030, seed: seedBase + 17 }),
+    name: `${c.label}铺作 · 耍头齐心交互斗`, role: '第八层 · 批竹耍头端承角梁斗（45° 卯槽承托老角梁翼角出跳）',
+    layer: 8, basePos: new THREE.Vector3(cx + c.sx * dOut, 3.488, cz + c.sz * dOut), rotY: diagRotY,
+    explodeVec: new THREE.Vector3(0, 2.64, 0),
+    matType: 'wood', dimsMm: '152 × 152 × 150 mm'
+  });
+});
+
+// L9: Purlins + Song 生头木, Taipingliang & Central Leigongzhu (11 meshes — strictly calibrated beneath Juzhe rafters, corner beams & sheathing)
+{
+  const buildPurlinGeo = (span, h, w, topLap, withShengtou, seed) => {
+    const lapLen = w + 0.004;
+    const inner = span - lapLen * 2.0;
+    const p = [boxAt(inner, h, w, 0, h * 0.5, 0, 'x', seed)];
+    const lapH = h * 0.48;
+    const lapY = topLap ? (h - lapH * 0.5) : (lapH * 0.5);
+    p.push(boxAt(lapLen, lapH, w, -(inner * 0.5 + lapLen * 0.5), lapY, 0, 'x', seed));
+    p.push(boxAt(lapLen, lapH, w,  (inner * 0.5 + lapLen * 0.5), lapY, 0, 'x', seed));
+
+    if (withShengtou) {
+      // Authentic Song 生头木 curved eave-riser strip across [-1.38..+1.38] supporting upturned outer 圆椽 with uniform 3mm fit
+      const stSegs = 12, stHalf = 1.38;
+      for (let i = 0; i < stSegs; i++) {
+        const x0 = -stHalf + (2.0 * stHalf * i) / stSegs;
+        const x1 = -stHalf + (2.0 * stHalf * (i + 1)) / stSegs;
+        const yt0 = Math.max(h + 0.004, (roofSurfaceY(x0, 1.620) - 0.129) - 3.491);
+        const yt1 = Math.max(h + 0.004, (roofSurfaceY(x1, 1.620) - 0.129) - 3.491);
+        p.push(loftSliceAt(x0, x1, h, h, yt0, yt1, w * 0.80, w * 0.80, seed, i === 0, i === stSegs - 1));
+      }
+    }
+    return mergeGeometries(p, false);
+  };
+
+  // 撩檐槫 + 生头木: seated flush in L8 令拱散斗 troughs at y = 3.491..3.559 m (w = 0.092 m < slotW = 0.098 m)
+  [
+    { n: '东面撩檐槫', top: false, pos: [ 1.620, 3.491, 0], rot: Math.PI * 0.5, exp: [0, 2.86, 0] },
+    { n: '西面撩檐槫', top: false, pos: [-1.620, 3.491, 0], rot: Math.PI * 0.5, exp: [0, 2.86, 0] },
+    { n: '南面撩檐槫', top: true,  pos: [0, 3.491,  1.620], rot: 0,             exp: [0, 2.96, 0] },
+    { n: '北面撩檐槫', top: true,  pos: [0, 3.491, -1.620], rot: 0,             exp: [0, 2.96, 0] }
+  ].forEach((ep, i) => {
+    registerPart({
+      geo: buildPurlinGeo(3.332, 0.068, 0.092, ep.top, true, 200 + i),
+      name: `梁槫 · ${ep.n}`, role: '第九层 · 外檐承椽槫木（坐入令拱散斗卯槽，上钉生头木承翼角起翘圆椽）',
+      layer: 9, basePos: new THREE.Vector3(...ep.pos), rotY: ep.rot,
+      explodeVec: new THREE.Vector3(...ep.exp), matType: 'wood', dimsMm: '3332 × 92 × 126 mm'
+    });
+  });
+
+  // 太平梁: seated at y = 3.945..4.045 m with lower corbel collars cradling 平槫 soffit (explodeVec strictly below 平槫!)
+  const buildTaipingBeamGeo = (notchMode, withCenterPin, seed) => {
+    const main = buildGongGeo({
+      length: 1.652, height: 0.100, thick: 0.100, notchMode, notchW: 0.104,
+      tenonXs: withCenterPin ? [0] : [], tenonPinSize: 0.048, tenonPinH: 0.028, seed
+    });
+    const collarL = boxAt(0.176, 0.036, 0.100, -0.838, -0.019, 0, 'x', seed);
+    const collarR = boxAt(0.176, 0.036, 0.100,  0.838, -0.019, 0, 'x', seed);
+    return mergeGeometries([main, collarL, collarR], false);
+  };
+
+  registerPart({
+    geo: buildTaipingBeamGeo('top', false, 221),
+    name: '梁架 · 东西向太平梁', role: '第九层 · 攒尖顶十字承重梁（两端阶梯托口承平槫，中凿上卡口承雷公柱与宫灯）',
+    layer: 9, basePos: new THREE.Vector3(0, 3.945, 0), rotY: 0,
+    explodeVec: new THREE.Vector3(0, 2.90, 0), matType: 'wood', dimsMm: '1852 × 100 × 136 mm'
+  });
+
+  registerPart({
+    geo: buildTaipingBeamGeo('bottom', true, 222),
+    name: '梁架 · 南北向太平梁', role: '第九层 · 攒尖顶十字交梁（两端阶梯托口承平槫，中立暗销榫贯入雷公柱）',
+    layer: 9, basePos: new THREE.Vector3(0, 3.945, 0), rotY: Math.PI * 0.5,
+    explodeVec: new THREE.Vector3(0, 3.04, 0), matType: 'wood', dimsMm: '1852 × 100 × 136 mm'
+  });
+
+  // 平槫: y = 3.945..4.045 m (cleared cleanly by 老角梁 tail >= 4.049 m and 圆椽 >= 4.053 m)
+  [
+    { n: '东面平槫', top: false, pos: [ 0.880, 3.945, 0], rot: Math.PI * 0.5, exp: [0, 3.20, 0] },
+    { n: '西面平槫', top: false, pos: [-0.880, 3.945, 0], rot: Math.PI * 0.5, exp: [0, 3.20, 0] },
+    { n: '南面平槫', top: true,  pos: [0, 3.945,  0.880], rot: 0,             exp: [0, 3.32, 0] },
+    { n: '北面平槫', top: true,  pos: [0, 3.945, -0.880], rot: 0,             exp: [0, 3.32, 0] }
+  ].forEach((up, i) => {
+    registerPart({
+      geo: buildPurlinGeo(1.860, 0.100, 0.100, up.top, false, 210 + i),
+      name: `梁槫 · ${up.n}`, role: '第九层 · 上层举折承椽平槫（转角刻半咬合，上托圆椽与老角梁尾）',
+      layer: 9, basePos: new THREE.Vector3(...up.pos), rotY: up.rot,
+      explodeVec: new THREE.Vector3(...up.exp), matType: 'wood', dimsMm: '1860 × 100 × 100 mm'
+    });
+  });
+
+  // 中心雷公柱: carved bottom mortise socket [0..0.032] receiving 太平梁暗销榫 + top tenon [0.880..0.932] entering 攒尖宝顶卯眼
+  const lgM = 0.056, lgOuter = 0.118, lgCheek = (lgOuter - lgM) * 0.5;
+  const lgParts = [
+    boxAt(lgCheek, 0.034, lgOuter, -(lgM + lgCheek) * 0.5, 0.017, 0, 'y', -225),
+    boxAt(lgCheek, 0.034, lgOuter,  (lgM + lgCheek) * 0.5, 0.017, 0, 'y', -225),
+    boxAt(lgM, 0.034, lgCheek, 0, 0.017, -(lgM + lgCheek) * 0.5, 'y', -225),
+    boxAt(lgM, 0.034, lgCheek, 0, 0.017,  (lgM + lgCheek) * 0.5, 'y', -225),
+    prepPartGeo(new THREE.CylinderGeometry(0.068, 0.082, 0.846, 12).translate(0, 0.457, 0), 'y', -225),
+    boxAt(0.050, 0.050, 0.050, 0, 0.905, 0, 'y', -225)
+  ];
+  registerPart({
+    geo: mergeGeometries(lgParts, false),
+    name: '梁架 · 中心雷公柱', role: '第九层 · 四角攒尖悬空蜀柱（下凿卯眼纳太平梁销榫，上立顶榫承攒尖宝顶）',
+    layer: 9, basePos: new THREE.Vector3(0, 4.046, 0),
+    explodeVec: new THREE.Vector3(0, 3.48, 0), matType: 'wood', dimsMm: 'Ø164 × 930 mm'
+  });
+}
+
+// L10: Smooth Lofted Upturned Corner Beams (老角梁 × 4 + 子角梁 × 4 = 8 meshes — zero purlin/dou/sheathing collision)
+CORNERS.forEach((c, idx) => {
+  const diagRotY = Math.atan2(-c.sz, c.sx);
+  const smoothstep = (e0, e1, x) => {
+    const t = Math.max(0.0, Math.min(1.0, (x - e0) / (e1 - e0)));
+    return t * t * (3.0 - 2.0 * t);
+  };
+
+  // Evaluate minimum 望板 soffit across the beam's full lateral width ±halfW so off-diagonal corners never pierce L12!
+  const minSheathBotAtR = (r, halfW) => {
+    const pDiag = r * Math.SQRT1_2;
+    const pEdge = (r + halfW) * Math.SQRT1_2;
+    const qEdge = Math.abs(r - halfW) * Math.SQRT1_2;
+    return Math.min(roofSurfaceY(pDiag, pDiag), roofSurfaceY(pEdge, qEdge)) - 0.024;
+  };
+
+  const fullTopAtR = (r) => minSheathBotAtR(r, 0.047) - 0.008;
+  const laojiaoBotAtR = (r) => {
+    const tailBot = Math.max(4.049, fullTopAtR(r) - 0.068); // >= 4.049 m (+4mm above 平槫 top 4.045m)
+    const seatBot = 3.580; // +2mm flush in 耍头齐心交互斗 trough (3.578m) & +17mm above 撩檐槫 corner (3.563m)
+    return tailBot + (seatBot - tailBot) * smoothstep(1.38, 2.08, r);
+  };
+  const scarfMidAtR = (r) => 0.5 * (laojiaoBotAtR(r) + fullTopAtR(r));
+
+  const buildSpan = (rA, rB, segs, botFn, topFn, thick, capStart, capEnd, seed) => {
+    const arr = [];
+    for (let i = 0; i < segs; i++) {
+      const r0 = rA + ((rB - rA) * i) / segs;
+      const r1 = rA + ((rB - rA) * (i + 1)) / segs;
+      arr.push(loftSliceAt(
+        r0, r1, botFn(r0), botFn(r1), topFn(r0), topFn(r1),
+        thick, thick, seed, i === 0 ? capStart : false, i === segs - 1 ? capEnd : false
+      ));
+    }
+    return arr;
+  };
+
+  const laoParts = [
+    ...buildSpan(1.180, 2.180, 10, laojiaoBotAtR, fullTopAtR, 0.090, true, true, 240 + idx),
+    ...buildSpan(2.180, 2.580, 5, laojiaoBotAtR, (r) => scarfMidAtR(r) - 0.002, 0.090, false, true, 240 + idx)
+  ];
+
+  const ziCantileverBot = (r) => {
+    const b0 = scarfMidAtR(2.584) + 0.002;
+    const bTip = fullTopAtR(3.240) - 0.072;
+    return b0 + (bTip - b0) * Math.pow(Math.max(0.0, (r - 2.584) / (3.240 - 2.584)), 1.35);
+  };
+  const ziParts = [
+    ...buildSpan(2.184, 2.584, 5, (r) => scarfMidAtR(r) + 0.002, fullTopAtR, 0.086, true, true, 250 + idx),
+    ...buildSpan(2.584, 3.240, 8, ziCantileverBot, fullTopAtR, 0.086, false, true, 250 + idx)
+  ];
+
+  registerPart({
+    geo: mergeGeometries(laoParts, false),
+    name: `${c.label}翼角 · 老角梁（大角梁）`, role: '第十层 · 翼角主承重斜梁（尾搭平槫、中越撩檐槫、前坐交互斗，上开阶梯搭交槽）',
+    layer: 10, rotY: diagRotY, explodeVec: new THREE.Vector3(0, 3.58, 0),
+    matType: 'wood', dimsMm: '1400 × 90 × 215 mm'
+  });
+
+  registerPart({
+    geo: mergeGeometries(ziParts, false),
+    name: `${c.label}翼角 · 子角梁`, role: '第十层 · 反宇起翘飞角梁（与老角梁阶梯刻半咬合，昂首挑出飞檐四角）',
+    layer: 10, rotY: diagRotY, explodeVec: new THREE.Vector3(c.sx * 0.24, 3.82, c.sz * 0.24),
+    matType: 'wood', dimsMm: '1056 × 86 × 125 mm'
+  });
+});
+
+// L11: Rafters & Flying Rafters (圆椽 × 20 + 飞椽 × 20 = 40 meshes — zero purlin/sheathing/self collision)
+{
+  const slopeDefs = [
+    { name: '南坡', rotY: 0 },
+    { name: '东坡', rotY: Math.PI * 0.5 },
+    { name: '北坡', rotY: Math.PI },
+    { name: '西坡', rotY: -Math.PI * 0.5 }
+  ];
+  const groupLateralCenters = [-0.68, -0.34, 0.0, 0.34, 0.68];
+  const smoothDip = (p) => {
+    const t = Math.max(0.0, Math.min(1.0, (p - 1.32) / 0.16));
+    return 0.036 * t * t * (3.0 - 2.0 * t);
+  };
+
+  slopeDefs.forEach((sl, sIdx) => {
+    groupLateralCenters.forEach((sCenter, gIdx) => {
+      const chuanParts = [], feiParts = [];
+      for (const sub of [-0.095, 0.0, 0.095]) {
+        const sRatio = Math.max(-0.78, Math.min(0.78, sCenter + sub));
+        const pEave = eaveOutwardExtent(Math.abs(sRatio));
+        const pInner = 0.56, pMid = 1.63;
+
+        for (let k = 0; k < 6; k++) {
+          const p0 = pInner + ((pMid - pInner) * k) / 6;
+          const p1 = pInner + ((pMid - pInner) * (k + 1)) / 6;
+          const pm = (p0 + p1) * 0.5;
+          const x0 = sRatio * p0, x1 = sRatio * p1, xm = sRatio * pm;
+          const y0 = roofSurfaceY(x0, p0) - 0.062 - smoothDip(p0);
+          const y1 = roofSurfaceY(x1, p1) - 0.062 - smoothDip(p1);
+          const v0 = new THREE.Vector3(x0, y0, p0), v1 = new THREE.Vector3(x1, y1, p1);
+          const cyl = new THREE.CylinderGeometry(0.018, 0.019, v0.distanceTo(v1) * 0.994, 8);
+          cyl.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), v1.clone().sub(v0).normalize()));
+          cyl.translate(xm, (y0 + y1) * 0.5, pm);
+          chuanParts.push(prepPartGeo(cyl, 'z', 300 + sIdx * 10 + gIdx));
+        }
+
+        const pFly0 = 1.51, pFly1 = pEave - 0.048;
+        for (let k = 0; k < 6; k++) {
+          const p0 = pFly0 + ((pFly1 - pFly0) * k) / 6;
+          const p1 = pFly0 + ((pFly1 - pFly0) * (k + 1)) / 6;
+          const pm = (p0 + p1) * 0.5;
+          const x0 = sRatio * p0, x1 = sRatio * p1, xm = sRatio * pm;
+          const y0 = roofSurfaceY(x0, p0) - 0.056, y1 = roofSurfaceY(x1, p1) - 0.056;
+          const v0 = new THREE.Vector3(x0, y0, p0), v1 = new THREE.Vector3(x1, y1, p1);
+          const box = new THREE.BoxGeometry(0.032, v0.distanceTo(v1) * 0.994, 0.022);
+          box.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), v1.clone().sub(v0).normalize()));
+          box.translate(xm, (y0 + y1) * 0.5, pm);
+          feiParts.push(prepPartGeo(box, 'z', 350 + sIdx * 10 + gIdx));
+        }
+      }
+
+      const latWorld = new THREE.Vector3(sCenter * 0.14, 0, 0.22).applyAxisAngle(new THREE.Vector3(0, 1, 0), sl.rotY);
+      registerPart({
+        geo: mergeGeometries(chuanParts, false),
+        name: `${sl.name} · 第${gIdx + 1}组檐部圆椽`, role: '第十一层 · 顺举折曲线铺设圆椽（尾搭平槫，首压撩檐槫生头木）',
+        layer: 11, rotY: sl.rotY, explodeVec: new THREE.Vector3(latWorld.x, 4.92, latWorld.z), matType: 'wood'
+      });
+
+      const flyWorld = new THREE.Vector3(sCenter * 0.20, 0, 0.38).applyAxisAngle(new THREE.Vector3(0, 1, 0), sl.rotY);
+      registerPart({
+        geo: mergeGeometries(feiParts, false),
+        name: `${sl.name} · 第${gIdx + 1}组翼角飞椽`, role: '第十一层 · 方截面反宇飞子（叠压圆椽首挑出深远飞檐）',
+        layer: 11, rotY: sl.rotY, explodeVec: new THREE.Vector3(flyWorld.x, 5.24, flyWorld.z), matType: 'wood'
+      });
+    });
+  });
+}
+
+// L12: Curved Sheathing, Glazed Barrel/Pan Tiles + Wadang/Dishui, Hip Ridges & Finial (29 watertight non-intersecting meshes)
+{
+  const slopeDefs = [
+    { name: '南坡', rotY: 0 },
+    { name: '东坡', rotY: Math.PI * 0.5 },
+    { name: '北坡', rotY: Math.PI },
+    { name: '西坡', rotY: -Math.PI * 0.5 }
+  ];
+
+  function buildCurvedSheathingGeo(s0, s1, uSteps, sSteps, yOffBot, yOffTop, seed) {
+    const positions = [];
+    const pt = (s, u, dy) => {
+      const pMax = eaveOutwardExtent(Math.abs(s));
+      const p = u * pMax, x = s * p;
+      return [x, roofSurfaceY(x, p) + dy, p];
+    };
+    const pushQuad = (a, b, c, d) => { positions.push(...a, ...b, ...c, ...a, ...c, ...d); };
+
+    for (let iu = 0; iu < uSteps; iu++) {
+      const u0 = 0.06 + (0.94 * iu) / uSteps, u1 = 0.06 + (0.94 * (iu + 1)) / uSteps;
+      for (let is = 0; is < sSteps; is++) {
+        const sa = s0 + ((s1 - s0) * is) / sSteps, sb = s0 + ((s1 - s0) * (is + 1)) / sSteps;
+        const t00 = pt(sa, u0, yOffTop), t10 = pt(sb, u0, yOffTop);
+        const t11 = pt(sb, u1, yOffTop), t01 = pt(sa, u1, yOffTop);
+        const b00 = pt(sa, u0, yOffBot), b10 = pt(sb, u0, yOffBot);
+        const b11 = pt(sb, u1, yOffBot), b01 = pt(sa, u1, yOffBot);
+        pushQuad(t00, t01, t11, t10);
+        pushQuad(b00, b10, b11, b01);
+        if (iu === 0) pushQuad(t10, b10, b00, t00);
+        if (iu === uSteps - 1) pushQuad(t01, b01, b11, t11);
+        if (is === 0) pushQuad(t00, b00, b01, t01);
+        if (is === sSteps - 1) pushQuad(t11, b11, b10, t10);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    g.computeVertexNormals();
+    return prepPartGeo(g, 'z', seed);
+  }
+
+  function buildTileSectorGeo(s0, s1, seed) {
+    // Same uSteps=14 piecewise surface + 8mm mortar bed gap above 望板 (0.000m) -> 0 self-penetration!
+    const parts = [buildCurvedSheathingGeo(s0, s1, 14, 6, 0.008, 0.024, seed)];
+    const numRibs = 3;
+    for (let r = 0; r < numRibs; r++) {
+      const sRib = s0 + ((s1 - s0) * (r + 0.5)) / numRibs;
+      const pMax = eaveOutwardExtent(Math.abs(sRib)) - 0.008;
+      // Authentic 攒尖瓦垄交戗 & strict sector containment: barrel ribs never overhang sector seams or hip ridges!
+      const hipStart = 0.096 / Math.max(0.05, (1.0 - Math.abs(sRib)) * Math.SQRT1_2);
+      const secStart = 0.032 / Math.max(0.02, Math.min(sRib - s0, s1 - sRib));
+      const pStart = Math.max(0.32, hipStart, secStart);
+      const segs = 9;
+      for (let k = 0; k < segs; k++) {
+        const p0 = pStart + ((pMax - pStart) * k) / segs;
+        const p1 = pStart + ((pMax - pStart) * (k + 1)) / segs;
+        const pm = (p0 + p1) * 0.5;
+        const x0 = sRib * p0, x1 = sRib * p1, xm = sRib * pm;
+        const y0 = roofSurfaceY(x0, p0) + 0.048, y1 = roofSurfaceY(x1, p1) + 0.048;
+        const v0 = new THREE.Vector3(x0, y0, p0), v1 = new THREE.Vector3(x1, y1, p1);
+        const dir = v1.clone().sub(v0);
+        const cyl = new THREE.CylinderGeometry(0.026, 0.030, dir.length() * 0.992, 8);
+        cyl.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize()));
+        cyl.translate(xm, (y0 + y1) * 0.5, pm);
+        parts.push(prepPartGeo(cyl, 'z', seed));
+      }
+
+      const pEave = eaveOutwardExtent(Math.abs(sRib));
+      const xe = sRib * pEave, ye = roofSurfaceY(xe, pEave) + 0.046;
+      const wadang = new THREE.CylinderGeometry(0.034, 0.034, 0.016, 12);
+      wadang.rotateX(Math.PI * 0.44);
+      wadang.translate(xe, ye, pEave + 0.018);
+      parts.push(prepPartGeo(wadang, 'z', seed));
+
+      const boss = new THREE.SphereGeometry(0.013, 8, 6);
+      boss.translate(xe, ye - 0.002, pEave + 0.028);
+      parts.push(prepPartGeo(boss, 'z', seed));
+
+      if (r < numRibs - 1) {
+        const sValley = s0 + ((s1 - s0) * (r + 1.0)) / numRibs;
+        const pVal = eaveOutwardExtent(Math.abs(sValley));
+        const xv = sValley * pVal, yv = roofSurfaceY(xv, pVal) - 0.004;
+        const dishui = new THREE.ConeGeometry(0.028, 0.046, 4);
+        dishui.rotateX(Math.PI * 0.94);
+        dishui.translate(xv, yv, pVal + 0.026);
+        parts.push(prepPartGeo(dishui, 'z', seed));
+      }
+    }
+    return mergeGeometries(parts, false);
+  }
+
+  const sectorBounds = [[-0.955, -0.502], [-0.486, -0.010], [0.010, 0.486], [0.502, 0.955]];
+  slopeDefs.forEach((sl, sIdx) => {
+    const wbExp = new THREE.Vector3(0, 0, 0.24).applyAxisAngle(new THREE.Vector3(0, 1, 0), sl.rotY);
+    registerPart({
+      geo: buildCurvedSheathingGeo(-0.982, 0.982, 14, 14, -0.024, 0.0, 400 + sIdx),
+      name: `${sl.name} · 举折反宇曲面望板`, role: '第十二层 · 覆椽木基层望板（贴合宋式举折与四角反宇曲线）',
+      layer: 12, rotY: sl.rotY, explodeVec: new THREE.Vector3(wbExp.x, 5.64, wbExp.z), matType: 'wood'
+    });
+
+    sectorBounds.forEach(([sa, sb], secIdx) => {
+      const sm = (sa + sb) * 0.5;
+      const tExp = new THREE.Vector3(sm * 0.22, 0, 0.38).applyAxisAngle(new THREE.Vector3(0, 1, 0), sl.rotY);
+      registerPart({
+        geo: buildTileSectorGeo(sa, sb, 420 + sIdx * 10 + secIdx),
+        name: `${sl.name} · 第${secIdx + 1}扇青黛筒板瓦当滴水`,
+        role: '第十二层 · 烟雨青黛琉璃瓦垄（叠铺板瓦、筒瓦、莲纹瓦当与尖唇滴水）',
+        layer: 12, rotY: sl.rotY, explodeVec: new THREE.Vector3(tExp.x, 5.96 + (secIdx % 2) * 0.06, tExp.z), matType: 'tile'
+      });
+    });
+  });
+
+  CORNERS.forEach((c, idx) => {
+    const diagRotY = Math.atan2(-c.sz, c.sx);
+    const ridgeParts = [];
+    const ridgeSegs = 16;
+    for (let i = 0; i < ridgeSegs; i++) {
+      const p0 = 0.26 + (2.00 * i) / ridgeSegs, p1 = 0.26 + (2.00 * (i + 1)) / ridgeSegs;
+      const r0 = p0 * Math.SQRT2, r1 = p1 * Math.SQRT2;
+      const yb0 = roofSurfaceY(p0, p0) + 0.030, yb1 = roofSurfaceY(p1, p1) + 0.030;
+      ridgeParts.push(loftSliceAt(
+        r0, r1, yb0, yb1, yb0 + 0.078, yb1 + 0.078, 0.096, 0.096,
+        480 + idx, i === 0, i === ridgeSegs - 1
+      ));
+    }
+
+    registerPart({
+      geo: mergeGeometries(ridgeParts, false),
+      name: `${c.label}屋脊 · 反宇垂脊（戗脊）`, role: '第十二层 · 四角斜脊叠瓦封护（随翼角昂扬起翘）',
+      layer: 12, rotY: diagRotY, explodeVec: new THREE.Vector3(c.sx * 0.34, 6.20, c.sz * 0.34), matType: 'tile'
+    });
+
+    const rTip = 2.20 * Math.SQRT2, yTip = roofSurfaceY(2.20, 2.20) + 0.110;
+    const scrollParts = [];
+    const torus = new THREE.TorusGeometry(0.072, 0.026, 10, 18, Math.PI * 1.45);
+    torus.translate(rTip - 0.02, yTip + 0.096, 0);
+    scrollParts.push(prepPartGeo(torus, 'x', 490 + idx));
+    const fin = new THREE.ConeGeometry(0.040, 0.15, 6);
+    fin.rotateZ(-0.48);
+    fin.translate(rTip - 0.07, yTip + 0.175, 0);
+    scrollParts.push(prepPartGeo(fin, 'y', 490 + idx));
+
+    registerPart({
+      geo: mergeGeometries(scrollParts, false),
+      name: `${c.label}翼角 · 宋式卷草鸱吻脊饰`, role: '第十二层 · 戗脊端压胜锁口琉璃吻兽',
+      layer: 12, rotY: diagRotY, explodeVec: new THREE.Vector3(c.sx * 0.46, 6.38, c.sz * 0.46),
+      matType: 'tile', dimsMm: '210 × 110 × 240 mm'
+    });
+  });
+
+  {
+    // Hollow square mortise socket [0..0.060] inside 宝顶 base receiving 雷公柱 top tenon (0mm overlap!)
+    const bdM = 0.062, bdOuter = 0.320, bdCheek = (bdOuter - bdM) * 0.5;
+    const bd = [
+      boxAt(bdCheek, 0.062, bdOuter, -(bdM + bdCheek) * 0.5, 0.031, 0, 'y', 501),
+      boxAt(bdCheek, 0.062, bdOuter,  (bdM + bdCheek) * 0.5, 0.031, 0, 'y', 501),
+      boxAt(bdM, 0.062, bdCheek, 0, 0.031, -(bdM + bdCheek) * 0.5, 'y', 501),
+      boxAt(bdM, 0.062, bdCheek, 0, 0.031,  (bdM + bdCheek) * 0.5, 'y', 501),
+      prepPartGeo(new THREE.CylinderGeometry(0.18, 0.22, 0.06, 8).translate(0, 0.092, 0), 'y', 501),
+      prepPartGeo(new THREE.SphereGeometry(0.155, 16, 12).scale(1, 0.62, 1).translate(0, 0.175, 0), 'y', 501),
+      prepPartGeo(new THREE.CylinderGeometry(0.065, 0.095, 0.10, 12).translate(0, 0.285, 0), 'y', 501),
+      prepPartGeo(new THREE.SphereGeometry(0.105, 16, 14).translate(0, 0.405, 0), 'y', 501),
+      prepPartGeo(new THREE.ConeGeometry(0.048, 0.15, 12).translate(0, 0.525, 0), 'y', 501)
+    ];
+    registerPart({
+      geo: mergeGeometries(bd, false),
+      name: '屋顶正中 · 攒尖覆钵宝珠顶', role: '第十二层 · 四脊交汇封顶琉璃宝顶（底凿方卯纳雷公柱顶榫）',
+      layer: 12, basePos: new THREE.Vector3(0, 4.93, 0),
+      explodeVec: new THREE.Vector3(0, 6.48, 0), matType: 'tile', dimsMm: 'Ø440 × 600 mm', guideDrop: 0.35
+    });
+  }
+}
+
+// ============================================================================
+// 11. WET MIRROR PLANES, ALIGNMENT GUIDES, PALACE LANTERN, WIND-BELLS, BAMBOO & RAIN
+// ============================================================================
+const courtyardMirrorMat = createWetReflectiveFloorMaterial(rtReflectCourtyard, reflectMatrixCourtyard, false);
+const courtyardMirrorMesh = new THREE.Mesh(new THREE.PlaneGeometry(54, 54), courtyardMirrorMat);
+courtyardMirrorMesh.rotation.x = -Math.PI * 0.5;
+courtyardMirrorMesh.position.y = 0.0;
+scene.add(courtyardMirrorMesh);
+
+const deckMirrorMat = createWetReflectiveFloorMaterial(rtReflectDeck, reflectMatrixDeck, true);
+const deckMirrorMesh = new THREE.Mesh(new THREE.PlaneGeometry(3.74, 3.74), deckMirrorMat);
+deckMirrorMesh.rotation.x = -Math.PI * 0.5;
+deckMirrorMesh.position.y = 0.4805;
+scene.add(deckMirrorMesh);
+
+const guidePositions = new Float32Array(alignmentSegments.length * 6);
+const guideGeo = new THREE.BufferGeometry();
+guideGeo.setAttribute('position', new THREE.BufferAttribute(guidePositions, 3));
+const guideMat = new THREE.LineBasicMaterial({ color: '#C89B54', transparent: true, opacity: 0.0, depthWrite: false });
+const guideLinesMesh = new THREE.LineSegments(guideGeo, guideMat);
+guideLinesMesh.frustumCulled = false;
+scene.add(guideLinesMesh);
+
+const lanternPivot = new THREE.Group();
+lanternPivot.position.set(0, 3.945, 0);
+scene.add(lanternPivot);
+
+const lanternBodyGroup = new THREE.Group();
+lanternPivot.add(lanternBodyGroup);
+
+{
+  // Bronze suspension chain anchored flush to 太平梁 soffit (y = 3.970 m) down to lantern canopy (y = -1.22 local)
+  const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 1.24, 8), bronzeMat);
+  cord.position.y = -0.62;
+  lanternBodyGroup.add(cord);
+
+  const frameParts = [
+    prepPartGeo(new THREE.ConeGeometry(0.28, 0.14, 6).translate(0, -1.28, 0), 'y', 601),
+    prepPartGeo(new THREE.CylinderGeometry(0.22, 0.22, 0.04, 6).translate(0, -1.36, 0), 'x', 601),
+    prepPartGeo(new THREE.CylinderGeometry(0.20, 0.16, 0.06, 6).translate(0, -1.80, 0), 'x', 601)
+  ];
+  for (let i = 0; i < 6; i++) {
+    const ang = (i * Math.PI) / 3 + Math.PI / 6;
+    frameParts.push(boxAt(0.020, 0.44, 0.020, Math.cos(ang) * 0.205, -1.58, Math.sin(ang) * 0.205, 'y', 602 + i));
+  }
+
+  const lanternWoodMesh = new THREE.Mesh(mergeGeometries(frameParts, false), cedarMat);
+  lanternWoodMesh.userData.partRecord = {
+    mesh: lanternWoodMesh,
+    name: '亭心悬饰 · 宋式六角木骨宫灯',
+    role: '陈设层 · 老杉木攒框羊皮宫灯（悬于太平梁底，暖金烛火映照斗拱与积水）',
+    layer: 9, baseMat: cedarMat, hoverMat: cedarHoverMat,
+    dimsMm: 'Ø560 × 920 mm', volumeM3: 0.015, explodable: false
+  };
+  lanternBodyGroup.add(lanternWoodMesh);
+  interactiveMeshes.push(lanternWoodMesh);
+
+  const silkMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: sharedUniforms.uTime, uInkMix: sharedUniforms.uInkMix },
+    vertexShader: `
+      varying vec3 vLocal;
+      void main() {
+        vLocal = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform float uInkMix;
+      varying vec3 vLocal;
+      void main() {
+        float flicker = 0.94 + 0.06 * sin(uTime * 7.3) * cos(uTime * 4.1);
+        float core = exp(-abs(vLocal.y + 1.58) * 4.5);
+        vec3 warmCore = vec3(1.0, 0.72, 0.34) * 3.2;
+        vec3 warmEdge = vec3(1.0, 0.48, 0.14) * 1.45;
+        vec3 col = mix(warmEdge, warmCore, core) * flicker;
+        vec3 inkLantern = mix(vec3(0.84, 0.44, 0.18), vec3(0.96, 0.68, 0.34), core);
+        gl_FragColor = vec4(mix(col, inkLantern, uInkMix), 1.0);
+      }
+    `
+  });
+  lanternBodyGroup.add(new THREE.Mesh(new THREE.CylinderGeometry(0.188, 0.182, 0.42, 6).translate(0, -1.58, 0), silkMat));
+
+  const tassel = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.032, 0.28, 8), bronzeMat);
+  tassel.position.y = -1.97;
+  lanternBodyGroup.add(tassel);
+}
+
+const lanternHaloMat = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  uniforms: { uTime: sharedUniforms.uTime, uInkMix: sharedUniforms.uInkMix, uExplodeAvg: sharedUniforms.uExplodeAvg },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv * 2.0 - 1.0;
+      vec4 mvCenter = modelViewMatrix * vec4(0.0, -1.58, 0.0, 1.0);
+      mvCenter.xy += position.xy;
+      gl_Position = projectionMatrix * mvCenter;
+    }
+  `,
+  fragmentShader: `
+    uniform float uTime;
+    uniform float uInkMix;
+    uniform float uExplodeAvg;
+    varying vec2 vUv;
+    void main() {
+      float r = length(vUv);
+      if (r > 1.0) discard;
+      float pulse = 0.95 + 0.05 * sin(uTime * 3.1);
+      float glow = exp(-r * r * 5.2) * 0.62 + exp(-r * 2.8) * 0.22;
+      glow *= smoothstep(1.0, 0.25, r) * pulse * (1.0 - uInkMix * 0.85) * (1.0 - uExplodeAvg * 0.38);
+      vec3 haloCol = vec3(1.0, 0.604, 0.235) * glow * 0.72;
+      gl_FragColor = vec4(haloCol, glow);
+    }
+  `
+});
+lanternBodyGroup.add(new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), lanternHaloMat));
+
+const windBells = [];
+CORNERS.forEach((c, idx) => {
+  const bellPivot = new THREE.Group();
+  const bx = c.sx * 2.20, bz = c.sz * 2.20, by = roofSurfaceY(2.20, 2.20) - 0.08;
+  bellPivot.position.set(bx, by, bz);
+  pavilionGroup.add(bellPivot);
+
+  const bellParts = [
+    prepPartGeo(new THREE.CylinderGeometry(0.004, 0.004, 0.12, 6).translate(0, -0.06, 0), 'y', 650 + idx),
+    prepPartGeo(new THREE.CylinderGeometry(0.026, 0.048, 0.11, 8).translate(0, -0.16, 0), 'y', 650 + idx),
+    prepPartGeo(new THREE.BoxGeometry(0.042, 0.095, 0.005).translate(0, -0.25, 0), 'y', 650 + idx)
+  ];
+
+  const bellMesh = new THREE.Mesh(mergeGeometries(bellParts, false), bronzeMat);
+  bellMesh.castShadow = true;
+
+  const rec = {
+    mesh: bellMesh, pivot: bellPivot,
+    basePivotPos: new THREE.Vector3(bx, by, bz),
+    explodeVec: new THREE.Vector3(c.sx * 0.24, 3.82, c.sz * 0.24),
+    layer: 10,
+    name: `${c.label}翼角 · 惊鸟铜风铎`,
+    role: '檐角悬饰 · 点击风铎触发五声音阶（宫商角徵羽）古琴泛音',
+    baseMat: bronzeMat, hoverMat: bronzeHoverMat,
+    dimsMm: 'Ø96 × 295 mm', volumeM3: 0.002,
+    isWindBell: true, bellIndex: idx, ringTime: -10.0
+  };
+  bellMesh.userData.partRecord = rec;
+  bellPivot.add(bellMesh);
+  interactiveMeshes.push(bellMesh);
+  windBells.push(rec);
+});
+
+// Courtyard Swaying Bamboo Groves + Nodal Branches & 个字/介字竹叶 + Grounded Song Scholar Rocks (竹石叠石)
+{
+  const bambooSpecs = [
+    // Grove 1: NW courtyard cluster around (-3.95, -2.75)
+    { x: -3.75, z: -2.85, h: 4.55, r: 0.032, leanX:  0.18, leanZ:  0.08 },
+    { x: -4.15, z: -2.35, h: 4.95, r: 0.035, leanX:  0.22, leanZ:  0.12 },
+    { x: -3.52, z: -3.28, h: 3.95, r: 0.028, leanX:  0.12, leanZ:  0.06 },
+    { x: -4.38, z: -3.02, h: 4.70, r: 0.033, leanX:  0.25, leanZ:  0.05 },
+    { x: -3.95, z: -2.05, h: 3.85, r: 0.027, leanX:  0.16, leanZ:  0.15 },
+    // Grove 2: NE courtyard cluster around (3.85, -3.85)
+    { x:  3.65, z: -3.85, h: 4.65, r: 0.033, leanX: -0.22, leanZ:  0.10 },
+    { x:  4.05, z: -3.42, h: 4.25, r: 0.030, leanX: -0.26, leanZ:  0.08 },
+    { x:  3.42, z: -4.22, h: 3.80, r: 0.027, leanX: -0.15, leanZ:  0.14 },
+    { x:  4.25, z: -4.05, h: 4.85, r: 0.034, leanX: -0.24, leanZ:  0.06 },
+    // Grove 3: SW foreground-left cluster around (-3.55, 3.25) — casts swaying bamboo shadows across front wet bluestone!
+    { x: -3.36, z:  3.62, h: 4.45, r: 0.031, leanX:  0.28, leanZ: -0.14 },
+    { x: -3.72, z:  3.18, h: 4.80, r: 0.034, leanX:  0.24, leanZ: -0.10 },
+    { x: -3.52, z:  2.78, h: 3.95, r: 0.028, leanX:  0.20, leanZ: -0.08 },
+    { x: -3.88, z:  3.55, h: 4.20, r: 0.029, leanX:  0.22, leanZ: -0.12 }
+  ];
+
+  // Procedural grounded Song Dynasty garden scholar rocks (湖石坡脚叠石, craggy weathered limestone, anchored below y = 0.000 m)
+  function buildScholarRockGeo(rx, ry, rz, px, pz, seed) {
+    const indexedGeo = new THREE.SphereGeometry(1.0, 28, 20);
+    const pos = indexedGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      let vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
+      const strata = Math.sin(vy * 7.5 + vx * 2.2 + seed) * 0.08;
+      const crag1 = (1.0 - Math.abs(Math.sin(vx * 2.9 + vz * 2.4 + seed * 1.7))) * 0.22;
+      const crag2 = Math.cos(vx * 5.4 - vz * 4.8 + seed * 2.3) * 0.10;
+      const disp = 0.88 + crag1 + crag2 + strata;
+      vx *= rx * disp;
+      vz *= rz * disp;
+      const normY = vy * 0.5 + 0.5;
+      vy = -0.040 + Math.pow(Math.max(0.0, normY), 0.88) * ry * (0.84 + crag1 * 0.55);
+      pos.setXYZ(i, vx + px, vy, vz + pz);
+    }
+    indexedGeo.computeVertexNormals();
+    const nonIdx = indexedGeo.toNonIndexed();
+    indexedGeo.dispose();
+    return prepPartGeo(nonIdx, 'x', 720 + seed);
+  }
+
+  const scholarRockMat = createPlinthStoneMaterial(false);
+  scholarRockMat.roughness = 0.58;
+  scholarRockMat.clearcoat = 0.12;
+  scholarRockMat.clearcoatRoughness = 0.42;
+  scholarRockMat.envMapIntensity = 0.62;
+
+  const rockParts = [
+    buildScholarRockGeo(0.68, 0.52, 0.58, -3.85, -2.68, 1),
+    buildScholarRockGeo(0.52, 0.34, 0.48, -4.25, -2.98, 2),
+    buildScholarRockGeo(0.44, 0.28, 0.42, -3.55, -3.15, 3),
+    buildScholarRockGeo(0.72, 0.56, 0.60,  3.82, -3.72, 4),
+    buildScholarRockGeo(0.48, 0.32, 0.46,  4.18, -3.98, 5),
+    buildScholarRockGeo(0.42, 0.26, 0.40,  3.45, -4.12, 6),
+    buildScholarRockGeo(0.64, 0.46, 0.54, -3.58,  3.32, 7),
+    buildScholarRockGeo(0.46, 0.30, 0.44, -3.32,  3.58, 8),
+    buildScholarRockGeo(0.42, 0.27, 0.38, -3.76,  2.96, 9)
+  ];
+  const scholarRockMesh = new THREE.Mesh(mergeGeometries(rockParts, false), scholarRockMat);
+  scholarRockMesh.castShadow = true;
+  scholarRockMesh.receiveShadow = true;
+  scene.add(scholarRockMesh);
+
+  // Build world-space merged bamboo culms + nodal twigs (bambooFrameGeo) and attached 3-blade 个字竹叶 clusters (bambooFoliageGeo)
+  // Both share exact aBambooSway = vec4(culmSeed, elevRatio, tipFlutterWeight, bladePhase) so twigs & petioles NEVER detach!
+  const tagBambooPart = (geo, culmSeed, hCulm, baseYOffset, flutterMode) => {
+    const nonIdx = geo.index ? geo.toNonIndexed() : geo;
+    if (nonIdx !== geo) geo.dispose();
+    if (!nonIdx.attributes.normal) nonIdx.computeVertexNormals();
+    const pos = nonIdx.attributes.position;
+    const swayArr = new Float32Array(pos.count * 4);
+    for (let k = 0; k < pos.count; k++) {
+      const wy = pos.getY(k);
+      const elev = Math.max(0.0, Math.min(1.15, (wy - baseYOffset) / hCulm));
+      swayArr[k * 4 + 0] = culmSeed;
+      swayArr[k * 4 + 1] = elev;
+      swayArr[k * 4 + 2] = flutterMode;
+      swayArr[k * 4 + 3] = pos.getX(k) * 3.1 + pos.getZ(k) * 2.7;
+    }
+    nonIdx.setAttribute('aBambooSway', new THREE.BufferAttribute(swayArr, 4));
+    return nonIdx;
+  };
+
+  // Authentic 3-blade Song 个字竹叶 spray radiating from petiole origin (0,0,0) with graceful rain-droop arch
+  function createThreeBladeSprayTemplate() {
+    const verts = [], flutterW = [];
+    const bladeSpecs = [
+      { yaw:  0.00, len: 0.30, w: 0.024, droop: -0.055 },
+      { yaw:  0.48, len: 0.25, w: 0.021, droop: -0.042 },
+      { yaw: -0.48, len: 0.24, w: 0.021, droop: -0.045 }
+    ];
+    for (const bl of bladeSpecs) {
+      const cy = Math.cos(bl.yaw), sy = Math.sin(bl.yaw);
+      const rot = (lx, ly, lz) => [lx * cy + lz * sy, ly, -lx * sy + lz * cy];
+      const p0 = rot(0.0, 0.0, 0.0);
+      const pL = rot(-bl.w, 0.006, bl.len * 0.36);
+      const pR = rot( bl.w, 0.006, bl.len * 0.36);
+      const pT = rot(0.0, bl.droop, bl.len);
+      verts.push(...p0, ...pR, ...pT, ...p0, ...pT, ...pL);
+      flutterW.push(0.0, 0.38, 1.0, 0.0, 1.0, 0.38);
+    }
+    return { verts, flutterW };
+  }
+  const sprayTpl = createThreeBladeSprayTemplate();
+
+  const frameGeos = [];
+  const leafVerts = [], leafSway = [];
+  let rng = 1337;
+  const nextRand = () => { rng = (rng * 16807) % 2147483647; return (rng - 1) / 2147483646; };
+  const matTmp = new THREE.Matrix4();
+  const qTmp = new THREE.Quaternion();
+  const eTmp = new THREE.Euler();
+  const sTmp = new THREE.Vector3(1, 1, 1);
+  const vTmpA = new THREE.Vector3(), vTmpB = new THREE.Vector3();
+  const upVec = new THREE.Vector3(0, 1, 0);
+
+  bambooSpecs.forEach((b) => {
+    const culmSeed = b.x * 1.7 + b.z * 2.3;
+    const culmQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(b.leanZ * 0.08, 0, -b.leanX * 0.08));
+    const culmOrigin = new THREE.Vector3(b.x, -0.02, b.z);
+    const nodePosAt = (uNorm) => new THREE.Vector3(0, uNorm * b.h, 0).applyQuaternion(culmQuat).add(culmOrigin);
+
+    for (let n = 0; n < 9; n++) {
+      const u0 = n / 9, u1 = (n + 1) / 9;
+      const r0 = b.r * (1.0 - u0 * 0.36), r1 = b.r * (1.0 - u1 * 0.36);
+      const seg = new THREE.CylinderGeometry(r1, r0, (u1 - u0) * b.h * 0.99, 8);
+      seg.translate(0, (u0 + u1) * 0.5 * b.h, 0);
+      seg.applyQuaternion(culmQuat);
+      seg.translate(culmOrigin.x, culmOrigin.y, culmOrigin.z);
+      frameGeos.push(tagBambooPart(seg, culmSeed, b.h, -0.02, 0.0));
+
+      if (n > 0) {
+        const ring = new THREE.TorusGeometry(r0 * 1.10, b.r * 0.085, 5, 8);
+        ring.rotateX(Math.PI * 0.5);
+        ring.translate(0, u0 * b.h, 0);
+        ring.applyQuaternion(culmQuat);
+        ring.translate(culmOrigin.x, culmOrigin.y, culmOrigin.z);
+        frameGeos.push(tagBambooPart(ring, culmSeed, b.h, -0.02, 0.0));
+      }
+
+      // Sprout paired nodal bamboo twigs (竹枝) from nodes n = 4..8 and attach 个字竹叶 sprays right onto twig nodes & tips!
+      if (n >= 4) {
+        const nodeWorld = nodePosAt(u0);
+        const twigsAtNode = n >= 6 ? 3 : 2;
+        const baseAz = (n * 2.39996) + nextRand() * 0.55;
+        for (let tw = 0; tw < twigsAtNode; tw++) {
+          const az = baseAz + tw * (twigsAtNode === 3 ? 2.094 : 2.75) + (nextRand() - 0.5) * 0.32;
+          const bLen = (0.34 + 0.24 * nextRand()) * (1.0 - (u0 - 0.44) * 0.32);
+          const riseY = bLen * (0.48 + 0.22 * nextRand());
+          const outR  = Math.sqrt(Math.max(0.01, bLen * bLen - riseY * riseY));
+          vTmpA.copy(nodeWorld);
+          vTmpB.set(nodeWorld.x + Math.cos(az) * outR, nodeWorld.y + riseY, nodeWorld.z + Math.sin(az) * outR);
+
+          const dir = vTmpB.clone().sub(vTmpA);
+          const twigGeo = new THREE.CylinderGeometry(0.0022, 0.0046, dir.length(), 5);
+          twigGeo.applyQuaternion(qTmp.setFromUnitVectors(upVec, dir.clone().normalize()));
+          twigGeo.translate((vTmpA.x + vTmpB.x) * 0.5, (vTmpA.y + vTmpB.y) * 0.5, (vTmpA.z + vTmpB.z) * 0.5);
+          frameGeos.push(tagBambooPart(twigGeo, culmSeed, b.h, -0.02, 0.12));
+
+          // Attach 2 three-blade sprays directly onto this twig (at 62% mid-node and 100% twig tip — zero mid-air floating!)
+          for (const frac of [0.62, 1.00]) {
+            const anchor = vTmpA.clone().lerp(vTmpB, frac);
+            const sc = (frac > 0.9 ? 1.02 : 0.84) * (0.88 + nextRand() * 0.28);
+            eTmp.set(0.26 + nextRand() * 0.32, az + (frac < 0.9 ? 0.42 : 0.0) + (nextRand() - 0.5) * 0.35, (nextRand() - 0.5) * 0.28, 'YXZ');
+            qTmp.setFromEuler(eTmp);
+            sTmp.set(sc, sc, sc);
+            matTmp.compose(anchor, qTmp, sTmp);
+
+            for (let vi = 0; vi < sprayTpl.flutterW.length; vi++) {
+              const vx = sprayTpl.verts[vi * 3 + 0], vy = sprayTpl.verts[vi * 3 + 1], vz = sprayTpl.verts[vi * 3 + 2];
+              const wp = new THREE.Vector3(vx, vy, vz).applyMatrix4(matTmp);
+              leafVerts.push(wp.x, wp.y, wp.z);
+              const elev = Math.max(0.0, Math.min(1.15, (wp.y + 0.02) / b.h));
+              leafSway.push(culmSeed, elev, sprayTpl.flutterW[vi], anchor.x * 2.9 + anchor.z * 3.3 + vi * 0.17);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const bambooFrameGeo = mergeGeometries(frameGeos, false);
+  const bambooFoliageGeo = new THREE.BufferGeometry();
+  bambooFoliageGeo.setAttribute('position', new THREE.Float32BufferAttribute(leafVerts, 3));
+  bambooFoliageGeo.setAttribute('aBambooSway', new THREE.Float32BufferAttribute(leafSway, 4));
+  bambooFoliageGeo.computeVertexNormals();
+
+  const unifiedBambooSwayVert = `
+    #include <begin_vertex>
+    float bSeed = aBambooSway.x;
+    float bElev = aBambooSway.y;
+    float bFlutterW = aBambooSway.z;
+    float bPhase = aBambooSway.w;
+    float windX = (sin(uTime * 1.45 + bSeed) * 0.16 + sin(uTime * 2.85 + bSeed * 1.7) * 0.055) * 0.26;
+    float windZ = cos(uTime * 1.15 + bSeed) * 0.08 * 0.26;
+    transformed.x += windX * bElev * bElev + sin(uTime * 3.9 + bPhase) * 0.008 * bFlutterW;
+    transformed.z += windZ * bElev * bElev + cos(uTime * 3.4 + bPhase) * 0.006 * bFlutterW;
+    transformed.y += sin(uTime * 4.4 + bPhase * 1.3) * 0.014 * bFlutterW;
+  `;
+
+  const bambooMat = new THREE.MeshStandardMaterial({ color: '#25332B', roughness: 0.45, metalness: 0.02 });
+  bambooMat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = sharedUniforms.uTime;
+    shader.uniforms.uInkMix = sharedUniforms.uInkMix;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\nattribute vec4 aBambooSway;\nuniform float uTime;\nvarying float vElev;`)
+      .replace('#include <begin_vertex>', `${unifiedBambooSwayVert}\nvElev = clamp(bElev, 0.0, 1.0);`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\nuniform float uInkMix;\nvarying float vElev;`)
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+         vec3 nightBam = pow(vec3(0.11, 0.16, 0.135), vec3(2.2)) * (0.75 + 0.45 * vElev);
+         vec3 inkBam   = pow(vec3(0.14, 0.20, 0.18), vec3(2.2)) * (0.72 + 0.48 * vElev);
+         diffuseColor.rgb = mix(nightBam, inkBam, uInkMix);`
+      );
+  };
+
+  const bambooDepthMat = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide });
+  bambooDepthMat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = sharedUniforms.uTime;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\nattribute vec4 aBambooSway;\nuniform float uTime;`)
+      .replace('#include <begin_vertex>', unifiedBambooSwayVert);
+  };
+
+  const leafMat = new THREE.MeshStandardMaterial({ color: '#223029', roughness: 0.52, side: THREE.DoubleSide });
+  leafMat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = sharedUniforms.uTime;
+    shader.uniforms.uInkMix = sharedUniforms.uInkMix;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>\nattribute vec4 aBambooSway;\nuniform float uTime;\nvarying float vLeafTip;`)
+      .replace('#include <begin_vertex>', `${unifiedBambooSwayVert}\nvLeafTip = bFlutterW;`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\nuniform float uInkMix;\nvarying float vLeafTip;`)
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+         vec3 nightLeaf = pow(vec3(0.095, 0.148, 0.126), vec3(2.2)) * (0.86 + 0.22 * vLeafTip);
+         vec3 inkLeaf   = pow(vec3(0.135, 0.195, 0.178), vec3(2.2)) * (0.82 + 0.28 * vLeafTip);
+         diffuseColor.rgb = mix(nightLeaf, inkLeaf, uInkMix);`
+      );
+  };
+
+  const bambooFrameMesh = new THREE.Mesh(bambooFrameGeo, bambooMat);
+  bambooFrameMesh.customDepthMaterial = bambooDepthMat;
+  bambooFrameMesh.castShadow = true;
+  bambooFrameMesh.receiveShadow = true;
+  scene.add(bambooFrameMesh);
+
+  const bambooFoliageMesh = new THREE.Mesh(bambooFoliageGeo, leafMat);
+  bambooFoliageMesh.customDepthMaterial = bambooDepthMat;
+  bambooFoliageMesh.castShadow = true;
+  scene.add(bambooFoliageMesh);
+}
+
+// Eave-Corner Water Droplet Bead Streams (屋檐四角成串滑落的雨滴粒子) & Slanted Rain Curtain
+{
+  const beadSpecs = [];
+  for (let s = 0; s < 16; s++) {
+    const isCorner = s < 4 ? 1.0 : 0.0;
+    const perStream = s < 4 ? 11 : 3;
+    for (let k = 0; k < perStream; k++) {
+      // Natural irregular pairing (primary droplet + trailing satellite micro-bead) instead of uniform ruler dashes
+      const pairOffset = (k % 2 === 1 && s < 4) ? -0.036 : (((s * 11 + k * 19) % 23) / 23.0 - 0.5) * 0.055;
+      const sizeScale = (k % 2 === 1 && s < 4) ? 0.62 : (0.82 + ((s * 7 + k * 13) % 11) / 11.0 * 0.34);
+      const speedJitter = 0.92 + ((s * 5 + k * 17) % 13) / 13.0 * 0.16;
+      beadSpecs.push({
+        streamId: s,
+        isCorner,
+        phase: (k / perStream + (s * 0.237) + pairOffset + 1.0) % 1.0,
+        rate: (isCorner > 0.5 ? 0.86 : 0.58) * speedJitter,
+        sizeScale
+      });
+    }
+  }
+  const beadQuadPos = [], beadQuadUv = [], beadOriginAttr = [], beadParamAttr = [];
+
+  for (let i = 0; i < beadSpecs.length; i++) {
+    const sp = beadSpecs[i];
+    const rc = RIPPLE_CENTERS[sp.streamId];
+    const startY = roofSurfaceY(rc.x, rc.y) - 0.02;
+
+    for (const [qx, qy] of [[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]]) {
+      beadQuadPos.push(qx, qy, 0);
+      beadQuadUv.push(qx, qy);
+      beadOriginAttr.push(rc.x, startY, rc.y);
+      beadParamAttr.push(sp.phase, sp.rate, sp.isCorner * sp.sizeScale + (sp.isCorner < 0.5 ? -sp.sizeScale : 0.0));
+    }
+  }
+
+  const beadGeo = new THREE.BufferGeometry();
+  beadGeo.setAttribute('position', new THREE.Float32BufferAttribute(beadQuadPos, 3));
+  beadGeo.setAttribute('aUv', new THREE.Float32BufferAttribute(beadQuadUv, 2));
+  beadGeo.setAttribute('aOrigin', new THREE.Float32BufferAttribute(beadOriginAttr, 3));
+  beadGeo.setAttribute('aParam', new THREE.Float32BufferAttribute(beadParamAttr, 3));
+
+  const beadMat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    uniforms: {
+      uTime: sharedUniforms.uTime,
+      uInkMix: sharedUniforms.uInkMix,
+      uExplodeAvg: sharedUniforms.uExplodeAvg,
+      uRoofLift: { value: 0.0 }
+    },
+    vertexShader: `
+      attribute vec2 aUv;
+      attribute vec3 aOrigin;
+      attribute vec3 aParam;
+      uniform float uTime;
+      uniform float uExplodeAvg;
+      uniform float uRoofLift;
+      varying vec2 vUv;
+      varying float vAlpha;
+      varying float vIsCorner;
+      void main() {
+        vUv = aUv;
+        vIsCorner = aParam.z > 0.0 ? 1.0 : 0.0;
+        float sizeScale = abs(aParam.z);
+        float phase = fract(uTime * aParam.y + aParam.x);
+        float startY = aOrigin.y + uRoofLift;
+        float fallT = max(0.0, (phase - 0.11) / 0.89);
+        float y = startY - fallT * fallT * startY;
+        float windDrift = fallT * fallT * 0.035;
+        float speedStretch = mix(0.018, 0.056, fallT) * sizeScale * (vIsCorner > 0.5 ? 1.12 : 0.80);
+        float width = mix(0.018, 0.0115, fallT) * sizeScale * (vIsCorner > 0.5 ? 1.18 : 0.72);
+        float explodeFade = 1.0 - smoothstep(0.06, 0.32, uExplodeAvg);
+        vAlpha = smoothstep(0.0, 0.07, phase) * smoothstep(1.0, 0.91, phase) * (vIsCorner > 0.5 ? 1.0 : 0.42) * explodeFade;
+        vec4 mv = modelViewMatrix * vec4(aOrigin.x + windDrift, max(y, 0.02), aOrigin.z, 1.0);
+        mv.x += aUv.x * width;
+        mv.y += aUv.y * speedStretch;
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: `
+      uniform float uInkMix;
+      varying vec2 vUv;
+      varying float vAlpha;
+      varying float vIsCorner;
+      void main() {
+        if (vAlpha <= 0.002) discard;
+        vec2 tdUv = vec2(vUv.x * (1.0 + max(0.0, vUv.y) * 0.50), vUv.y * 0.86);
+        float d = length(tdUv);
+        if (d > 1.0) discard;
+        float body = exp(-d * d * 3.5);
+        float specPin = exp(-dot(vUv - vec2(-0.16, -0.24), vUv - vec2(-0.16, -0.24)) * 14.0) * 0.52;
+        float intensity = body * 0.78 + specPin;
+        vec3 nightDrop = mix(vec3(0.56, 0.76, 0.90), vec3(0.96, 0.74, 0.44), vIsCorner * 0.36) * intensity;
+        vec3 inkDrop   = vec3(0.22, 0.27, 0.28) * body * 0.26;
+        gl_FragColor = vec4(mix(nightDrop, inkDrop, uInkMix), clamp(intensity, 0.0, 1.0) * vAlpha * mix(0.62, 0.16, uInkMix));
+      }
+    `
+  });
+
+  const beadStreamMesh = new THREE.Mesh(beadGeo, beadMat);
+  beadStreamMesh.frustumCulled = false;
+  scene.add(beadStreamMesh);
+  sharedUniforms.uBeadRoofLift = beadMat.uniforms.uRoofLift;
+
+  const rainCount = 1500;
+  const rPos = new Float32Array(rainCount * 6);
+  const rEnds = new Float32Array(rainCount * 2);
+  const rSpeedAttr = new Float32Array(rainCount * 2);
+  let rRng = 9973;
+  const rRand = () => { rRng = (rRng * 16807) % 2147483647; return (rRng - 1) / 2147483646; };
+
+  for (let i = 0; i < rainCount; i++) {
+    const rx = (rRand() - 0.5) * 24.0, ry = rRand() * 11.0, rz = (rRand() - 0.5) * 24.0;
+    const sp = 0.75 + rRand() * 0.55;
+    rPos[i*6+0] = rx; rPos[i*6+1] = ry; rPos[i*6+2] = rz;
+    rPos[i*6+3] = rx; rPos[i*6+4] = ry; rPos[i*6+5] = rz;
+    rEnds[i*2+0] = 0.0; rEnds[i*2+1] = 1.0;
+    rSpeedAttr[i*2+0] = sp; rSpeedAttr[i*2+1] = sp;
+  }
+
+  const rainGeo = new THREE.BufferGeometry();
+  rainGeo.setAttribute('position', new THREE.BufferAttribute(rPos, 3));
+  rainGeo.setAttribute('aEnd', new THREE.BufferAttribute(rEnds, 1));
+  rainGeo.setAttribute('aSpeed', new THREE.BufferAttribute(rSpeedAttr, 1));
+
+  const rainMat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    uniforms: { uTime: sharedUniforms.uTime, uInkMix: sharedUniforms.uInkMix, uLanternPos: { value: lanternLight.position } },
+    vertexShader: `
+      attribute float aEnd;
+      attribute float aSpeed;
+      uniform float uTime;
+      uniform vec3 uLanternPos;
+      varying float vEnd;
+      varying vec3 vTint;
+      void main() {
+        vEnd = aEnd;
+        vec3 p = position;
+        p.y = mod(p.y - uTime * 8.2 * aSpeed, 11.0);
+        p.x += sin(p.z * 0.5) * 0.15 + (11.0 - p.y) * 0.065;
+        bool underRoof = (abs(p.x) < 1.95 && abs(p.z) < 1.95 && p.y < 3.55);
+        p += vec3(0.026, 0.36, 0.01) * aEnd;
+        float warmAmt = exp(-length(p - uLanternPos) * 0.34);
+        vTint = mix(vec3(0.45, 0.62, 0.74), vec3(1.0, 0.65, 0.32), warmAmt * 0.85);
+        if (underRoof) vEnd = -1.0;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uInkMix;
+      varying float vEnd;
+      varying vec3 vTint;
+      void main() {
+        if (vEnd < 0.0) discard;
+        float alpha = (1.0 - vEnd) * mix(0.155, 0.065, uInkMix);
+        gl_FragColor = vec4(mix(vTint, vec3(0.28, 0.31, 0.30), uInkMix), alpha);
+      }
+    `
+  });
+
+  const rainLines = new THREE.LineSegments(rainGeo, rainMat);
+  rainLines.frustumCulled = false;
+  scene.add(rainLines);
+}
+
+// ============================================================================
+// 12. DUAL POST-PROCESSING PIPELINE (AgX Rain Night <-> Anisotropic Kuwahara Song Ink)
+// ============================================================================
+function createSceneRenderTarget(w, h) {
+  const depthTex = new THREE.DepthTexture(w, h);
+  depthTex.type = THREE.UnsignedIntType;
+  depthTex.minFilter = THREE.NearestFilter;
+  depthTex.magFilter = THREE.NearestFilter;
+
+  return new THREE.WebGLRenderTarget(w, h, {
+    type: THREE.HalfFloatType,
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    depthBuffer: true,
+    depthTexture: depthTex
+  });
+}
+
+let SSAA = DPR <= 1.25 ? 1.35 : 1.0;
+let displayW = Math.max(1, Math.floor(window.innerWidth * DPR));
+let displayH = Math.max(1, Math.floor(window.innerHeight * DPR));
+let renderW = Math.max(1, Math.floor(displayW * SSAA));
+let renderH = Math.max(1, Math.floor(displayH * SSAA));
+let rtScene = createSceneRenderTarget(renderW, renderH);
+let rtTensor = new THREE.WebGLRenderTarget(Math.max(1, Math.floor(displayW * 0.5)), Math.max(1, Math.floor(displayH * 0.5)), {
+  type: THREE.HalfFloatType,
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter,
+  depthBuffer: false
+});
+
+const postScene = new THREE.Scene();
+const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const postQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), null);
+postScene.add(postQuad);
+
+const tensorMat = new THREE.ShaderMaterial({
+  depthTest: false,
+  depthWrite: false,
+  uniforms: {
+    tScene: { value: rtScene.texture },
+    uTexel: { value: new THREE.Vector2(1.0 / displayW, 1.0 / displayH) }
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position.xy, 0.0, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tScene;
+    uniform vec2 uTexel;
+    varying vec2 vUv;
+
+    vec3 sampleTM(vec2 uv) {
+      vec3 c = max(texture2D(tScene, uv).rgb, vec3(0.0));
+      return c / (1.0 + c);
+    }
+
+    void main() {
+      vec2 tx = uTexel;
+      vec3 c00 = sampleTM(vUv + vec2(-tx.x, -tx.y));
+      vec3 c10 = sampleTM(vUv + vec2( 0.0,  -tx.y));
+      vec3 c20 = sampleTM(vUv + vec2( tx.x, -tx.y));
+      vec3 c01 = sampleTM(vUv + vec2(-tx.x,  0.0));
+      vec3 c11 = sampleTM(vUv);
+      vec3 c21 = sampleTM(vUv + vec2( tx.x,  0.0));
+      vec3 c02 = sampleTM(vUv + vec2(-tx.x,  tx.y));
+      vec3 c12 = sampleTM(vUv + vec2( 0.0,   tx.y));
+      vec3 c22 = sampleTM(vUv + vec2( tx.x,  tx.y));
+
+      vec3 gx = (c20 + 2.0 * c21 + c22) - (c00 + 2.0 * c01 + c02);
+      vec3 gy = (c02 + 2.0 * c12 + c22) - (c00 + 2.0 * c10 + c20);
+
+      gl_FragColor = vec4(dot(gx, gx), dot(gx, gy), dot(gy, gy), dot(c11, vec3(0.299, 0.587, 0.114)));
+    }
+  `
+});
+
+const compositeMat = new THREE.ShaderMaterial({
+  depthTest: false,
+  depthWrite: false,
+  uniforms: {
+    tScene: { value: rtScene.texture },
+    tDepth: { value: rtScene.depthTexture },
+    tTensor: { value: rtTensor.texture },
+    uResolution: { value: new THREE.Vector2(displayW, displayH) },
+    uInkMix: sharedUniforms.uInkMix,
+    uTime: sharedUniforms.uTime,
+    uNear: { value: camera.near },
+    uFar: { value: camera.far },
+    uExposure: { value: 1.24 }
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position.xy, 0.0, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tScene;
+    uniform sampler2D tDepth;
+    uniform sampler2D tTensor;
+    uniform vec2 uResolution;
+    uniform float uInkMix;
+    uniform float uTime;
+    uniform float uNear;
+    uniform float uFar;
+    uniform float uExposure;
+    varying vec2 vUv;
+
+    vec3 mortiseAgxContrastApprox(vec3 x) {
+      vec3 x2 = x * x;
+      vec3 x4 = x2 * x2;
+      return + 15.5     * x4 * x2
+             - 40.14    * x4 * x
+             + 31.96    * x4
+             - 6.868    * x2 * x
+             + 0.4298   * x2
+             + 0.1191   * x
+             - 0.00232;
+    }
+
+    vec3 applyAgX(vec3 linearHdr) {
+      const mat3 agxIn = mat3(
+        0.842479062253094,  0.0423282422610123, 0.0423756549057051,
+        0.0784335999999992, 0.878468636469772,  0.0784336,
+        0.0792237451477643, 0.0791661274605434, 0.879142973793104
+      );
+      const mat3 agxOut = mat3(
+         1.19687900512017,   -0.0528968517574562, -0.0529716355144438,
+        -0.0980208811401368,  1.15190312990417,   -0.0980434501171241,
+        -0.0990297440797205, -0.0989611768448433,  1.15107367264116
+      );
+      vec3 val = agxIn * max(linearHdr * uExposure, vec3(1e-6));
+      val = clamp(log2(val), -12.47393, 4.026069);
+      val = (val - (-12.47393)) / (4.026069 - (-12.47393));
+      val = mortiseAgxContrastApprox(val);
+      val = agxOut * val;
+      float luma = dot(val, vec3(0.2126, 0.7152, 0.0722));
+      val = luma + (val - luma) * 1.16;
+      return clamp(val, 0.0, 1.0);
+    }
+
+    // 4-tap Rotated-Grid Super-Sampling resolve over the 1.5x HDR buffer
+    vec3 sampleHdrRGSS(vec2 uv, vec2 outTexel) {
+      vec2 o1 = vec2(-0.125, -0.375) * outTexel;
+      vec2 o2 = vec2( 0.375, -0.125) * outTexel;
+      vec2 o3 = vec2(-0.375,  0.125) * outTexel;
+      vec2 o4 = vec2( 0.125,  0.375) * outTexel;
+      return 0.25 * (
+        texture2D(tScene, uv + o1).rgb +
+        texture2D(tScene, uv + o2).rgb +
+        texture2D(tScene, uv + o3).rgb +
+        texture2D(tScene, uv + o4).rgb
+      );
+    }
+
+    // Fast filmic sRGB curve for the 25-tap Anisotropic Kuwahara neighborhood
+    vec3 fastToneSrgb(vec3 hdr) {
+      vec3 x = max(hdr * uExposure, vec3(0.0));
+      vec3 mapped = (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
+      return sqrt(clamp(mapped, 0.0, 1.0));
+    }
+
+    float linearizeDepth(float d) {
+      float z = d * 2.0 - 1.0;
+      return (2.0 * uNear * uFar) / (uFar + uNear - z * (uFar - uNear));
+    }
+
+    float hash21(vec2 p) {
+      p = fract(p * vec2(234.34, 435.345));
+      p += dot(p, p + 34.23);
+      return fract(p.x * p.y);
+    }
+
+    float noise2(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(
+        mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+        mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x),
+        f.y
+      );
+    }
+
+    float xuanPaperTexture(vec2 uv, vec2 res) {
+      vec2 p = uv * vec2(res.x / res.y, 1.0);
+      // Authentic hand-laid Song Xuan paper (帘纹 + domain-warped oblique 青檀皮 bark fibers, zero orthogonal plaid!)
+      float warp = noise2(p * 12.0) * 2.1;
+      float laid = sin(p.y * 680.0 + warp) * 0.5 + 0.5;
+      vec2 pRotA = mat2(0.80, -0.60, 0.60, 0.80) * p;
+      vec2 pRotB = mat2(0.52,  0.85, -0.85, 0.52) * p;
+      float fibA = noise2(vec2(pRotA.x * 165.0 + warp * 2.2, pRotA.y * 28.0));
+      float fibB = noise2(vec2(pRotB.x * 155.0 - warp * 2.0, pRotB.y * 26.0));
+      return laid * 0.16 + fibA * 0.42 + fibB * 0.42;
+    }
+
+    void main() {
+      vec2 texel = 1.0 / uResolution;
+      vec3 rawHdr = uInkMix > 0.999 ? texture2D(tScene, vUv).rgb : sampleHdrRGSS(vUv, texel);
+
+      vec3 softGlow = vec3(0.0);
+      vec3 modeASrgb = vec3(0.0);
+      if (uInkMix < 0.999) {
+        for (int i = 0; i < 8; i++) {
+          float ang = float(i) * 0.785398;
+          vec2 off = vec2(cos(ang), sin(ang)) * texel * 5.8;
+          vec3 sc = texture2D(tScene, vUv + off).rgb;
+          // Luminance-preserving soft knee prevents pure #FF0000 per-channel red ring shift on warm cedar!
+          float lumS = dot(sc, vec3(0.2126, 0.7152, 0.0722));
+          float knee = max(lumS - 0.72, 0.0) / max(lumS, 1e-4);
+          softGlow += sc * min(knee, 2.5);
+        }
+        softGlow /= 8.0;
+
+        // Post-AgX Edge-Directed FXAA + RGSS eliminates 1px stair-step aliasing on diagonal ridges, timbers & stone steps
+        vec3 glowAdd = softGlow * 0.25;
+        vec3 rgbM  = applyAgX(rawHdr + glowAdd);
+        vec3 rgbNW = applyAgX(texture2D(tScene, vUv + vec2(-0.5, -0.5) * texel).rgb + glowAdd);
+        vec3 rgbNE = applyAgX(texture2D(tScene, vUv + vec2( 0.5, -0.5) * texel).rgb + glowAdd);
+        vec3 rgbSW = applyAgX(texture2D(tScene, vUv + vec2(-0.5,  0.5) * texel).rgb + glowAdd);
+        vec3 rgbSE = applyAgX(texture2D(tScene, vUv + vec2( 0.5,  0.5) * texel).rgb + glowAdd);
+
+        const vec3 lumaW = vec3(0.2126, 0.7152, 0.0722);
+        float lumaM  = dot(rgbM,  lumaW);
+        float lumaNW = dot(rgbNW, lumaW);
+        float lumaNE = dot(rgbNE, lumaW);
+        float lumaSW = dot(rgbSW, lumaW);
+        float lumaSE = dot(rgbSE, lumaW);
+
+        float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
+        float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
+        float lumaRange = lumaMax - lumaMin;
+        float aaMask = smoothstep(max(0.024, lumaMax * 0.065), max(0.048, lumaMax * 0.125), lumaRange);
+
+        modeASrgb = rgbM;
+        if (aaMask > 0.005) {
+          vec2 dir;
+          dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
+          dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));
+          float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * 0.125), 1.0 / 128.0);
+          float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
+          dir = clamp(dir * rcpDirMin, vec2(-6.5), vec2(6.5)) * texel;
+
+          vec3 rgbA = 0.5 * (
+            applyAgX(texture2D(tScene, vUv + dir * (1.0 / 3.0 - 0.5)).rgb + glowAdd) +
+            applyAgX(texture2D(tScene, vUv + dir * (2.0 / 3.0 - 0.5)).rgb + glowAdd)
+          );
+          vec3 rgbB = rgbA * 0.5 + 0.25 * (
+            applyAgX(texture2D(tScene, vUv + dir * -0.5).rgb + glowAdd) +
+            applyAgX(texture2D(tScene, vUv + dir *  0.5).rgb + glowAdd)
+          );
+          float lumaB = dot(rgbB, lumaW);
+          vec3 fxaaResolved = (lumaB < lumaMin || lumaB > lumaMax) ? rgbA : rgbB;
+          modeASrgb = mix(rgbM, fxaaResolved, aaMask);
+        }
+
+        // Single-gamma display-referred AgX output (preserves deep #0F171A, oiled #5C3A21 cedar & #2B373D tile glaze)
+        float vigA = 1.0 - smoothstep(0.58, 1.36, length((vUv - 0.5) * vec2(1.22, 1.0))) * 0.20;
+        modeASrgb *= vigA;
+      }
+
+      if (uInkMix <= 0.001) {
+        gl_FragColor = vec4(modeASrgb, 1.0);
+        return;
+      }
+
+      // Mode B: Anisotropic Kuwahara + Xuan Paper Fibers + Depth-Modulated Sobel/DoG Feibai Ink
+      vec2 tOff = texel * 2.0;
+      vec4 st = (
+        texture2D(tTensor, vUv) * 0.36 +
+        texture2D(tTensor, vUv + vec2( tOff.x, 0.0)) * 0.16 +
+        texture2D(tTensor, vUv + vec2(-tOff.x, 0.0)) * 0.16 +
+        texture2D(tTensor, vUv + vec2(0.0,  tOff.y)) * 0.16 +
+        texture2D(tTensor, vUv + vec2(0.0, -tOff.y)) * 0.16
+      );
+
+      float E = st.x, F = st.y, G = st.z;
+      float root = sqrt(max((E - G) * (E - G) + 4.0 * F * F, 0.0));
+      float l1 = 0.5 * (E + G + root);
+      float l2 = 0.5 * (E + G - root);
+      float aniso = (l1 - l2) / (l1 + l2 + 1e-5);
+      float phi = 0.5 * atan(2.0 * F, E - G) + 1.5707963;
+      float cPhi = cos(phi), sPhi = sin(phi);
+      mat2 rotMat = mat2(cPhi, -sPhi, sPhi, cPhi);
+      vec2 ellipseScale = vec2(1.0 + 1.85 * aniso, 1.0 / (1.0 + 1.35 * aniso));
+
+      vec3 centerCol = fastToneSrgb(rawHdr);
+      vec3 secMean[8];
+      vec3 secSq[8];
+      for (int k = 0; k < 8; k++) {
+        secMean[k] = centerCol * 0.25;
+        secSq[k] = centerCol * centerCol * 0.25;
+      }
+
+      float baseRadius = 4.3;
+      for (int k = 0; k < 8; k++) {
+        float secAng = (float(k) + 0.5) * 0.78539816;
+        vec2 dirLocal = vec2(cos(secAng), sin(secAng)) * ellipseScale;
+        vec2 dirUV = (rotMat * dirLocal) * texel * baseRadius;
+
+        vec3 s1 = fastToneSrgb(texture2D(tScene, vUv + dirUV * 0.48).rgb);
+        vec3 s2 = fastToneSrgb(texture2D(tScene, vUv + dirUV * 0.98).rgb);
+
+        secMean[k] = (secMean[k] + s1 + s2) / 2.25;
+        secSq[k]   = (secSq[k] + s1 * s1 + s2 * s2) / 2.25;
+      }
+
+      vec3 kuwaharaCol = vec3(0.0);
+      float wSum = 0.0;
+      for (int k = 0; k < 8; k++) {
+        vec3 variance = abs(secSq[k] - secMean[k] * secMean[k]);
+        float vScalar = variance.r + variance.g + variance.b;
+        float w = 1.0 / (1.0 + pow(vScalar * 54.0, 3.5));
+        kuwaharaCol += secMean[k] * w;
+        wSum += w;
+      }
+      kuwaharaCol /= max(wSum, 1e-4);
+
+      float dCenter = linearizeDepth(texture2D(tDepth, vUv).r);
+      float dL = linearizeDepth(texture2D(tDepth, vUv - vec2(texel.x * 1.4, 0.0)).r);
+      float dR = linearizeDepth(texture2D(tDepth, vUv + vec2(texel.x * 1.4, 0.0)).r);
+      float dD = linearizeDepth(texture2D(tDepth, vUv - vec2(0.0, texel.y * 1.4)).r);
+      float dU = linearizeDepth(texture2D(tDepth, vUv + vec2(0.0, texel.y * 1.4)).r);
+
+      float kLuma = dot(kuwaharaCol, vec3(0.299, 0.587, 0.114));
+      float cyanSignal = (kuwaharaCol.g * 0.52 + kuwaharaCol.b * 0.48) - kuwaharaCol.r;
+      float warmSignal = kuwaharaCol.r - kuwaharaCol.b;
+
+      // Blank Xuan paper留白 mask gated strictly to distant outer courtyard & sky (never punches white holes in foreground plinth/wood!)
+      float outerOrSky = smoothstep(14.5, 21.0, dCenter);
+      float paperLeaveBlank = outerOrSky * smoothstep(0.79, 0.88, kLuma) * (1.0 - smoothstep(0.055, 0.135, cyanSignal));
+      float min5Depth = min(dCenter, min(min(dL, dR), min(dD, dU)));
+      float fgDepthMask = smoothstep(25.0, 21.0, min5Depth);
+
+      float depthGrad = (abs(dR - dL) + abs(dU - dD)) / max(dCenter, 1.0);
+      float depthEdge = smoothstep(0.014, 0.072, depthGrad) * fgDepthMask * (1.0 - paperLeaveBlank * 0.96);
+
+      float lumC = dot(centerCol, vec3(0.299, 0.587, 0.114));
+      float dogEdge = smoothstep(0.014, 0.072, kLuma - lumC) * (1.0 - paperLeaveBlank * 0.94);
+      float colorEdge = smoothstep(0.065, 0.28, sqrt(l1)) * (1.0 - paperLeaveBlank * 0.94);
+
+      float isForeground = step(dCenter, 46.0);
+      float depthFade = clamp(1.0 - (dCenter - 9.5) / 25.0, 0.24, 1.0);
+
+      float paper = xuanPaperTexture(vUv, uResolution);
+      vec2 brushCoord = rotMat * (vUv * uResolution * 0.25);
+      float bristle = noise2(vec2(brushCoord.x * 0.35, brushCoord.y * 3.6));
+      float feibaiMask = smoothstep(0.14, 0.66, bristle * 0.65 + paper * 0.55);
+
+      float rawEdge = max(depthEdge * 1.08, max(dogEdge * 0.88, colorEdge * 0.70));
+      float inkStroke = clamp(rawEdge * feibaiMask * depthFade, 0.0, 1.0);
+
+      vec3 paperTint = vec3(0.918, 0.890, 0.824) * (0.968 + 0.052 * paper); // #EAE3D2 organic Xuan scroll
+
+      // Distinct Song Dynasty mineral & ink washes: 石青/石绿 (roof/peaks), 赭石调墨 (wood), 淡墨青石 (plinth/deck/scholar rocks)
+      vec3 neutralInkWash = mix(vec3(0.16, 0.18, 0.19), vec3(0.65, 0.66, 0.64), smoothstep(0.18, 0.78, kLuma));
+      vec3 ochreInkWash   = mix(vec3(0.18, 0.12, 0.09), vec3(0.55, 0.37, 0.23), smoothstep(0.16, 0.68, kLuma));
+      vec3 mineralWash    = mix(
+        vec3(0.10, 0.27, 0.31),
+        mix(vec3(0.23, 0.46, 0.40), vec3(0.38, 0.58, 0.49), smoothstep(0.45, 0.72, kLuma)),
+        smoothstep(0.22, 0.58, kLuma)
+      );
+
+      vec3 pigment = mix(neutralInkWash, ochreInkWash, smoothstep(0.085, 0.22, warmSignal));
+      pigment = mix(pigment, mineralWash, smoothstep(0.082, 0.195, cyanSignal));
+
+      float lanternAccent = smoothstep(0.22, 0.48, warmSignal) * smoothstep(0.48, 0.80, kLuma);
+      pigment = mix(pigment, vec3(0.84, 0.49, 0.22), lanternAccent * 0.88);
+
+      float fgOpacity = mix(0.92, 0.68, smoothstep(0.58, 0.86, kLuma)) * (1.0 - paperLeaveBlank * 0.96);
+      float bgOpacity = smoothstep(0.85, 0.46, kLuma) * 0.76 * (1.0 - paperLeaveBlank);
+      float washOpacity = isForeground > 0.5 ? fgOpacity : bgOpacity;
+
+      float waterRim = smoothstep(0.02, 0.14, colorEdge) * 0.12 * isForeground * (1.0 - paperLeaveBlank);
+      vec3 songScroll = mix(paperTint, pigment, clamp(washOpacity + waterRim, 0.0, 0.94));
+
+      vec3 inkColor = mix(vec3(0.32, 0.35, 0.34), vec3(0.072, 0.068, 0.060), depthFade);
+      songScroll = mix(songScroll, inkColor, inkStroke * 0.92);
+
+      float scrollVig = smoothstep(1.40, 0.54, length((vUv - 0.5) * vec2(1.18, 1.0)));
+      songScroll *= mix(0.92, 1.0, scrollVig);
+
+      gl_FragColor = vec4(mix(modeASrgb, songScroll, uInkMix), 1.0);
+    }
+  `
+});
+
+// ============================================================================
+// 13. PLANAR MIRROR REFLECTION RENDERER
+// ============================================================================
+const clipPlaneCourtyard = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0.015);
+const clipPlaneDeck      = new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.472);
+
+function renderPlanarReflection(planeHeight, targetRT, outMatrix, clipPlane) {
+  courtyardMirrorMesh.visible = false;
+  deckMirrorMesh.visible = false;
+  guideLinesMesh.visible = false;
+
+  reflectCam.fov = camera.fov;
+  reflectCam.aspect = camera.aspect;
+  reflectCam.near = camera.near;
+  reflectCam.far = camera.far;
+
+  reflectCam.position.set(camera.position.x, 2.0 * planeHeight - camera.position.y, camera.position.z);
+  reflectCam.up.set(0, 1, 0);
+  reflectCam.lookAt(controls.target.x, 2.0 * planeHeight - controls.target.y, controls.target.z);
+  reflectCam.updateMatrixWorld();
+  reflectCam.updateProjectionMatrix();
+
+  outMatrix.multiplyMatrices(reflectCam.projectionMatrix, reflectCam.matrixWorldInverse);
+
+  const prevShadowAuto = renderer.shadowMap.autoUpdate;
+  renderer.shadowMap.autoUpdate = false;
+  renderer.clippingPlanes = [clipPlane];
+  renderer.setRenderTarget(targetRT);
+  renderer.clear();
+  renderer.render(scene, reflectCam);
+
+  renderer.clippingPlanes = [];
+  renderer.shadowMap.autoUpdate = prevShadowAuto;
+  courtyardMirrorMesh.visible = true;
+  deckMirrorMesh.visible = true;
+  guideLinesMesh.visible = true;
+}
+
+// ============================================================================
+// 14. UI TELEMETRY, RAYCAST HOVER, CAMERA BREATHING & DETERMINISTIC renderAt(t)
+// ============================================================================
+const statCountEl     = document.getElementById('stat-count');
+const statPrecisionEl = document.getElementById('stat-precision');
+const statFpsEl       = document.getElementById('stat-fps');
+const sliderEl        = document.getElementById('explode-slider');
+const explodePctEl    = document.getElementById('explode-pct');
+const explodeBtnEl    = document.getElementById('explode-toggle-btn');
+const modeBtnEl       = document.getElementById('mode-switch-btn');
+const modeLabelEl     = document.getElementById('mode-label');
+const audioBtnEl      = document.getElementById('audio-btn');
+const audioLabelEl    = document.getElementById('audio-label');
+const hoverCardEl     = document.getElementById('hover-card');
+const hcNameEl        = document.getElementById('hc-name');
+const hcRoleEl        = document.getElementById('hc-role');
+const hcDimEl         = document.getElementById('hc-dim');
+
+const explodableCount = components.filter((c) => c.explodable).length;
+statCountEl.textContent = `${explodableCount} Joinery / ${components.length} Total`;
+
+const LAYER_EN_GLOSS = [
+  'L0 · Ashlar Bluestone Plinth',
+  'L1 · Song Entasis Column (Suozhu)',
+  'L2 · Dovetail Architrave (Lan\'e)',
+  'L3 · Tie-Beam Plate (Pupaifang)',
+  'L4 · Capital Bearing Block (Ludou)',
+  'L5 · 1st-Tier Cantilever Bracket (Huagong)',
+  'L6 · Cross Bearing Block (Jiaohudou)',
+  'L7 · 2nd-Tier Diagonal Bracket & Shuatou',
+  'L8 · Upper Purlin Bearing Block (Sandou)',
+  'L9 · Roof Purlin & King-Post Frame',
+  'L10 · Upturned Corner Hip Beam (Jiaoliang)',
+  'L11 · Radial & Flying Rafters (Feichuan)',
+  'L12 · Song Glazed Roof & Lotus Finial'
+];
+
+let currentMode = 'realistic';
+let targetInkMix = 0.0;
+let simTime = 0.0;
+let deterministicOverride = false;
+let customCameraLocked = false;
+let userDraggingCamera = false;
+let userInteractedCamera = false;
+let frameCounter = 0;
+let lastFpsStamp = performance.now();
+let fpsFrames = 0;
+let displayedFps = 60;
+
+const baseOrbit = {
+  radius0: 19.8,
+  radiusExploded: 26.8,
+  azimuth0: 0.465,
+  height0: 2.82,
+  heightExploded: 5.75,
+  targetY0: 1.36,
+  targetYExploded: 5.50
+};
+
+const hemiSkyRealistic = new THREE.Color('#688DA4');
+const hemiSkyInk       = new THREE.Color('#D8D3C8');
+const hemiGndRealistic = new THREE.Color('#332216');
+const hemiGndInk       = new THREE.Color('#7A756C');
+const moonColRealistic = new THREE.Color('#C2DDF0');
+const moonColInk       = new THREE.Color('#E8E3D8');
+const rimColRealistic  = new THREE.Color('#7BA3BC');
+const rimColInk        = new THREE.Color('#C9C5BC');
+
+controls.addEventListener('start', () => {
+  userDraggingCamera = true;
+  userInteractedCamera = true;
+  zenAudio.ensureUnlockedQuietly();
+});
+controls.addEventListener('end', () => { userDraggingCamera = false; });
+
+let lastSliderAudioStep = 0;
+let sliderDriven = false;
+sliderEl.addEventListener('input', () => {
+  deterministicOverride = false;
+  sliderDriven = true;
+  zenAudio.ensureUnlockedQuietly();
+  const raw = parseFloat(sliderEl.value);
+  const val = Number.isFinite(raw) ? Math.max(0.0, Math.min(1.0, raw / 1000.0)) : 0.0;
+  springCtrl.setTarget(val, simTime, true, false);
+  explodeBtnEl.textContent = val > 0.5 ? '归位 · ASSEMBLE' : '拆解 · EXPLODE';
+  const stepBucket = Math.floor(val * 12);
+  if (stepBucket !== lastSliderAudioStep) {
+    lastSliderAudioStep = stepBucket;
+    zenAudio.playWoodKnock(0.008 + (12 - stepBucket) * 0.004, val < 0.5);
+  }
+});
+
+explodeBtnEl.addEventListener('click', () => {
+  deterministicOverride = false;
+  zenAudio.ensureUnlockedQuietly();
+  setExplode(springCtrl.target > 0.45 ? 0.0 : 1.0, false);
+});
+
+modeBtnEl.addEventListener('click', () => {
+  deterministicOverride = false;
+  zenAudio.ensureUnlockedQuietly();
+  setMode(currentMode === 'realistic' ? 'ink' : 'realistic', false);
+  zenAudio.playGuqinHarmonic();
+});
+
+audioBtnEl.addEventListener('click', () => {
+  const on = zenAudio.toggle();
+  audioLabelEl.textContent = on ? '声境 · ZEN AUDIO ON' : '声境 · SOUND OFF';
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  const k = e.key.toLowerCase();
+  if (k === 'i') {
+    deterministicOverride = false;
+    zenAudio.ensureUnlockedQuietly();
+    setMode(currentMode === 'realistic' ? 'ink' : 'realistic', false);
+    zenAudio.playGuqinHarmonic();
+  } else if (k === 'e' || e.code === 'Space') {
+    e.preventDefault();
+    deterministicOverride = false;
+    zenAudio.ensureUnlockedQuietly();
+    setExplode(springCtrl.target > 0.45 ? 0.0 : 1.0, false);
+  } else if (k === 'm') {
+    const on = zenAudio.toggle();
+    audioLabelEl.textContent = on ? '声境 · ZEN AUDIO ON' : '声境 · SOUND OFF';
+  }
+});
+
+const raycaster = new THREE.Raycaster();
+const pointerNDC = new THREE.Vector2(-99, -99);
+let hoveredRecord = null;
+
+window.addEventListener('pointermove', (e) => {
+  pointerNDC.x = (e.clientX / window.innerWidth) * 2.0 - 1.0;
+  pointerNDC.y = -(e.clientY / window.innerHeight) * 2.0 + 1.0;
+  hoverCardEl.style.left = `${Math.min(e.clientX + 6, window.innerWidth - 310)}px`;
+  hoverCardEl.style.top  = `${Math.max(e.clientY - 12, 24)}px`;
+});
+
+renderer.domElement.addEventListener('click', (e) => {
+  pointerNDC.x = (e.clientX / window.innerWidth) * 2.0 - 1.0;
+  pointerNDC.y = -(e.clientY / window.innerHeight) * 2.0 + 1.0;
+  raycaster.setFromCamera(pointerNDC, camera);
+  const hits = raycaster.intersectObjects(interactiveMeshes, false);
+  if (hits.length > 0) {
+    const rec = hits[0].object.userData.partRecord;
+    if (rec && rec.isWindBell) {
+      rec.ringTime = simTime;
+      rec.strikeCount = (rec.strikeCount || 0) + 1;
+      const degIdx = (rec.bellIndex + rec.strikeCount - 1) % 5; // Cycles full 宫商角徵羽 pentatonic scale
+      if (!zenAudio.enabled) {
+        const on = zenAudio.toggle(degIdx);
+        audioLabelEl.textContent = on ? '声境 · ZEN AUDIO ON' : '声境 · SOUND OFF';
+      } else {
+        zenAudio.playGuqinHarmonic(degIdx);
+      }
+    } else if (rec) {
+      zenAudio.playWoodKnock(rec.volumeM3, true);
+    }
+  }
+});
+
+function updateHoverRaycast() {
+  if (pointerNDC.x < -1.5 || userDraggingCamera) return;
+  raycaster.setFromCamera(pointerNDC, camera);
+  const hits = raycaster.intersectObjects(interactiveMeshes, false);
+  const nextRec = hits.length > 0 ? hits[0].object.userData.partRecord : null;
+
+  if (nextRec !== hoveredRecord) {
+    if (hoveredRecord && hoveredRecord.mesh) hoveredRecord.mesh.material = hoveredRecord.baseMat;
+    hoveredRecord = nextRec;
+    if (hoveredRecord && hoveredRecord.mesh) {
+      hoveredRecord.mesh.material = hoveredRecord.hoverMat;
+      hcNameEl.textContent = hoveredRecord.name;
+      const enLayer = hoveredRecord.isWindBell
+        ? 'Bronze Corner Wind-Bell · Click for Pentatonic Guqin'
+        : (LAYER_EN_GLOSS[hoveredRecord.layer] || `Layer L${hoveredRecord.layer}`);
+      hcRoleEl.textContent = `${enLayer} · ${hoveredRecord.role}`;
+      hcDimEl.textContent  = `SPEC · ${hoveredRecord.dimsMm}`;
+      hoverCardEl.classList.add('visible');
+      renderer.domElement.style.cursor = hoveredRecord.isWindBell ? 'pointer' : 'crosshair';
+    } else {
+      hoverCardEl.classList.remove('visible');
+      renderer.domElement.style.cursor = 'default';
+    }
+  }
+}
+
+function evaluateSceneAt(t, updateBothReflections = false) {
+  sharedUniforms.uTime.value = t;
+  const ink = sharedUniforms.uInkMix.value;
+
+  const springStats = springCtrl.update(t, (layerIdx, isLocking) => {
+    zenAudio.playWoodKnock(0.06 / Math.max(1, layerIdx), isLocking);
+  });
+  const avgExp = springStats.avgRatio;
+  sharedUniforms.uExplodeAvg.value = avgExp;
+
+  let maxWorldDispMeters = 0.0;
+  for (let i = 0; i < components.length; i++) {
+    const c = components[i];
+    if (!c.explodable) continue;
+    const pL = springCtrl.layers[c.layer].currentP;
+    c.mesh.position.set(
+      c.basePos.x + c.explodeVec.x * pL,
+      c.basePos.y + c.explodeVec.y * pL,
+      c.basePos.z + c.explodeVec.z * pL
+    );
+    const disp = c.explodeVec.length() * Math.abs(pL);
+    if (disp > maxWorldDispMeters) maxWorldDispMeters = disp;
+  }
+
+  guideMat.opacity = Math.min(0.28, Math.max(0.0, avgExp * 0.34)) * (1.0 - ink * 0.25);
+  guideMat.color.set(ink > 0.5 ? '#3C3830' : '#C89B54');
+  if (guideMat.opacity > 0.002) {
+    const arr = guideGeo.attributes.position.array;
+    for (let i = 0; i < alignmentSegments.length; i++) {
+      const seg = alignmentSegments[i];
+      const pL = springCtrl.layers[seg.rec.layer].currentP;
+      const mPos = seg.rec.mesh.position;
+      const yTop = mPos.y + seg.localOffset.y;
+      const len = seg.dropLen * Math.max(0.0, pL) * 2.2;
+      arr[i*6+0] = mPos.x; arr[i*6+1] = yTop;       arr[i*6+2] = mPos.z;
+      arr[i*6+3] = mPos.x; arr[i*6+4] = yTop - len; arr[i*6+5] = mPos.z;
+    }
+    guideGeo.attributes.position.needsUpdate = true;
+  }
+
+  const pL9 = springCtrl.layers[9].currentP;
+  lanternPivot.position.y = 3.945 + 2.90 * pL9;
+  const swayX = Math.sin(t * 1.12) * 0.024 + Math.sin(t * 2.31) * 0.007;
+  const swayZ = Math.cos(t * 0.89) * 0.019;
+  lanternBodyGroup.rotation.z = swayX;
+  lanternBodyGroup.rotation.x = swayZ;
+  lanternLight.position.set(
+    Math.sin(swayX) * 1.58,
+    lanternPivot.position.y - Math.cos(swayX) * 1.58,
+    -Math.sin(swayZ) * 1.58
+  );
+  lanternLight.intensity = (11.2 + Math.sin(t * 6.7) * 0.65) * (1.0 - ink);
+
+  const pL10 = springCtrl.layers[10].currentP;
+  const pL12 = springCtrl.layers[12].currentP;
+  if (sharedUniforms.uBeadRoofLift) sharedUniforms.uBeadRoofLift.value = pL12 * 5.96;
+
+  for (let i = 0; i < windBells.length; i++) {
+    const wb = windBells[i];
+    wb.pivot.position.set(
+      wb.basePivotPos.x + wb.explodeVec.x * pL10,
+      wb.basePivotPos.y + wb.explodeVec.y * pL10,
+      wb.basePivotPos.z + wb.explodeVec.z * pL10
+    );
+    const dtRing = Math.max(0.0, t - wb.ringTime);
+    const ringOsc = dtRing < 4.0 ? Math.exp(-dtRing * 1.35) * Math.sin(dtRing * 11.0) * 0.28 : 0.0;
+    wb.pivot.rotation.z = Math.sin(t * 1.7 + i * 1.3) * 0.065 + ringOsc;
+    wb.pivot.rotation.x = Math.cos(t * 1.3 + i * 0.9) * 0.048;
+  }
+
+  // Neutralize directional/hemisphere light chromaticity in Mode B so stoneMat stays pure sumi wash (zero cyan bleed)
+  hemiLight.color.lerpColors(hemiSkyRealistic, hemiSkyInk, ink);
+  hemiLight.groundColor.lerpColors(hemiGndRealistic, hemiGndInk, ink);
+  moonLight.color.lerpColors(moonColRealistic, moonColInk, ink);
+  rimLight.color.lerpColors(rimColRealistic, rimColInk, ink);
+  hemiLight.intensity = 1.18 + ink * 1.35;
+  moonLight.intensity = 2.45 + ink * 0.55;
+  rimLight.intensity  = 1.15 * (1.0 - ink * 0.45);
+  warmBounceLight.intensity = 3.6 * (1.0 - ink);
+  if ('environmentIntensity' in scene) scene.environmentIntensity = 1.0 - ink * 0.72;
+
+  if (!customCameraLocked && !userInteractedCamera && !userDraggingCamera) {
+    const smoothExp = Math.max(0.0, Math.min(1.0, avgExp));
+    const rad = THREE.MathUtils.lerp(baseOrbit.radius0, baseOrbit.radiusExploded, smoothExp);
+    const camY = THREE.MathUtils.lerp(baseOrbit.height0, baseOrbit.heightExploded, smoothExp) + Math.sin(t * 0.42) * 0.12;
+    const tgtY = THREE.MathUtils.lerp(baseOrbit.targetY0, baseOrbit.targetYExploded, smoothExp);
+    const az = baseOrbit.azimuth0 + Math.sin(t * 0.16) * 0.18;
+    camera.position.set(Math.sin(az) * rad, camY, Math.cos(az) * rad);
+    controls.target.set(0.0, tgtY, 0.0);
+    controls.update();
+  } else if (!customCameraLocked) {
+    controls.update();
+  }
+  if (camera.position.y < 0.18) {
+    camera.position.y = 0.18;
+    camera.lookAt(controls.target);
+    camera.updateMatrixWorld();
+  }
+
+  const interlockPct = Math.max(0.0, (1.0 - Math.min(1.0, avgExp)) * 100.0);
+  const errMm = maxWorldDispMeters * 1000.0;
+  statPrecisionEl.textContent = `${interlockPct.toFixed(1)}% · ±${errMm < 0.05 ? '0.00' : errMm.toFixed(1)} mm`;
+
+  const isSpringMoving = Math.abs(springCtrl.target - avgExp) > 0.0005;
+  if (sliderDriven && !isSpringMoving && document.activeElement !== sliderEl) {
+    sliderDriven = false;
+  }
+  if (!sliderDriven && document.activeElement !== sliderEl) {
+    sliderEl.value = String(Math.round(Math.max(0, Math.min(1, avgExp)) * 1000));
+  }
+  explodePctEl.textContent = `${Math.round(Math.max(0, Math.min(1, sliderDriven ? springCtrl.target : avgExp)) * 100)}%`;
+
+  if (updateBothReflections || isSpringMoving || frameCounter % 2 === 0) {
+    renderer.shadowMap.needsUpdate = true;
+  }
+
+  const canRenderDeckReflect = camera.position.y > 0.50;
+  if (ink < 0.999) {
+    if (updateBothReflections) {
+      renderPlanarReflection(0.0, rtReflectCourtyard, reflectMatrixCourtyard, clipPlaneCourtyard);
+      if (canRenderDeckReflect) renderPlanarReflection(0.4805, rtReflectDeck, reflectMatrixDeck, clipPlaneDeck);
+    } else if (frameCounter % 2 === 0 || !canRenderDeckReflect) {
+      renderPlanarReflection(0.0, rtReflectCourtyard, reflectMatrixCourtyard, clipPlaneCourtyard);
+    } else {
+      renderPlanarReflection(0.4805, rtReflectDeck, reflectMatrixDeck, clipPlaneDeck);
+    }
+  }
+
+  const syncFloorShadows = () => {
+    if (moonLight.shadow.map) {
+      courtyardMirrorMat.uniforms.tMoonShadow.value = moonLight.shadow.map.texture;
+      deckMirrorMat.uniforms.tMoonShadow.value = moonLight.shadow.map.texture;
+      moonShadowMatrixUniform.copy(moonLight.shadow.matrix);
+      courtyardMirrorMat.uniforms.uShadowReady.value = 1.0;
+      deckMirrorMat.uniforms.uShadowReady.value = 1.0;
+      return true;
+    }
+    return false;
+  };
+  const hadFloorShadows = syncFloorShadows();
+
+  renderer.setRenderTarget(rtScene);
+  renderer.clear();
+  renderer.render(scene, camera);
+
+  // On frame 0 when WebGLShadowMap allocates moonLight.shadow.map during render(), immediately bind & re-draw floor with PCSS shadows
+  if (!hadFloorShadows && syncFloorShadows()) {
+    renderer.setRenderTarget(rtScene);
+    renderer.clear();
+    renderer.render(scene, camera);
+  }
+
+  if (ink > 0.001) {
+    postQuad.material = tensorMat;
+    renderer.setRenderTarget(rtTensor);
+    renderer.render(postScene, postCam);
+  }
+
+  postQuad.material = compositeMat;
+  renderer.setRenderTarget(null);
+  renderer.render(postScene, postCam);
+}
+
+function setExplode(targetRatio, instant = false) {
+  sliderDriven = false;
+  const num = Number(targetRatio);
+  const clamped = Number.isFinite(num) ? Math.max(0.0, Math.min(1.0, num)) : 0.0;
+  springCtrl.setTarget(clamped, simTime, !instant, instant);
+  sliderEl.value = String(Math.round(clamped * 1000));
+  explodePctEl.textContent = `${Math.round(clamped * 100)}%`;
+  explodeBtnEl.textContent = clamped > 0.45 ? '归位 · ASSEMBLE' : '拆解 · EXPLODE';
+}
+
+function setMode(mode, instant = false) {
+  currentMode = mode === 'ink' ? 'ink' : 'realistic';
+  targetInkMix = currentMode === 'ink' ? 1.0 : 0.0;
+  if (instant) {
+    sharedUniforms.uInkMix.value = targetInkMix;
+    document.body.classList.add('instant-ui');
+  }
+  document.body.classList.toggle('mode-ink', currentMode === 'ink');
+  modeLabelEl.textContent = currentMode === 'ink'
+    ? '画境 · SONG INK → RAIN NIGHT'
+    : '画境 · RAIN NIGHT → SONG INK';
+  if (instant) {
+    void document.body.offsetHeight;
+    document.body.classList.remove('instant-ui');
+  }
+}
+
+function setInkMix(mixVal) {
+  const m = Math.max(0.0, Math.min(1.0, Number(mixVal) || 0.0));
+  sharedUniforms.uInkMix.value = m;
+  targetInkMix = m;
+  currentMode = m >= 0.5 ? 'ink' : 'realistic';
+  document.body.classList.add('instant-ui');
+  document.body.classList.toggle('mode-ink', currentMode === 'ink');
+  modeLabelEl.textContent = currentMode === 'ink'
+    ? '画境 · SONG INK → RAIN NIGHT'
+    : '画境 · RAIN NIGHT → SONG INK';
+  void document.body.offsetHeight;
+  document.body.classList.remove('instant-ui');
+}
+
+function setCameraPose(posArr, targetArr) {
+  customCameraLocked = true;
+  controls.target.set(targetArr[0], targetArr[1], targetArr[2]);
+  camera.position.set(posArr[0], Math.max(0.18, posArr[1]), posArr[2]);
+  camera.up.set(0, 1, 0);
+  camera.lookAt(controls.target);
+  camera.updateMatrixWorld();
+}
+
+function resetCameraPose() {
+  customCameraLocked = false;
+  userInteractedCamera = false;
+}
+
+window.renderAt = function renderAt(t) {
+  deterministicOverride = true;
+  simTime = Number(t) || 0.0;
+  evaluateSceneAt(simTime, true);
+  return window.getStats();
+};
+
+window.setExplode = setExplode;
+window.setMode = setMode;
+window.setInkMix = setInkMix;
+window.setCameraPose = setCameraPose;
+window.resetCameraPose = resetCameraPose;
+
+// One-time vertex-level carpentry & roof-clearance audit at 0% interlocked state
+const carpentryAudit = (() => {
+  let minRoofClearanceMm = Infinity;
+  let plinthMinY = Infinity;
+  let stairPlinthPenetrations = 0;
+  let shuatouMaxUnderLiaoyanY = -Infinity;
+  let laojiaoliangMinOverPingtuanY = Infinity;
+  const layerMinY = new Array(MAX_LAYER + 1).fill(Infinity);
+  const layerMaxY = new Array(MAX_LAYER + 1).fill(-Infinity);
+  const byName = new Map();
+  const vTmp = new THREE.Vector3();
+
+  for (let i = 0; i < components.length; i++) {
+    const c = components[i];
+    byName.set(c.name, c);
+    if (c.explodable) c.mesh.position.copy(c.basePos);
+    const pos = c.mesh.geometry.attributes.position;
+    c.mesh.updateMatrixWorld(true);
+    const isStair = c.name.includes('三出陛踏跺');
+    const isSeShuatou = c.name === '东南铺作 · 批竹耍头';
+    const isSeLaojiaoliang = c.name === '东南翼角 · 老角梁（大角梁）';
+
+    for (let k = 0; k < pos.count; k++) {
+      vTmp.set(pos.getX(k), pos.getY(k), pos.getZ(k)).applyMatrix4(c.mesh.matrix);
+      if (vTmp.y < layerMinY[c.layer]) layerMinY[c.layer] = vTmp.y;
+      if (vTmp.y > layerMaxY[c.layer]) layerMaxY[c.layer] = vTmp.y;
+      if (c.layer === 0 && vTmp.y < plinthMinY) plinthMinY = vTmp.y;
+
+      if (isStair) {
+        const ax = Math.abs(vTmp.x), az = Math.abs(vTmp.z), wy = vTmp.y;
+        if ((ax < 2.549 && az < 2.549 && wy > 0.001 && wy < 0.159) ||
+            (ax < 2.249 && az < 2.249 && wy > 0.161 && wy < 0.319) ||
+            (ax < 1.949 && az < 1.949 && wy > 0.321 && wy < 0.477)) {
+          stairPlinthPenetrations++;
+        }
+      }
+      if (isSeShuatou && Math.max(Math.abs(vTmp.x), Math.abs(vTmp.z)) <= 1.670) {
+        if (vTmp.y > shuatouMaxUnderLiaoyanY) shuatouMaxUnderLiaoyanY = vTmp.y;
+      }
+      if (isSeLaojiaoliang) {
+        const mCoord = Math.max(Math.abs(vTmp.x), Math.abs(vTmp.z));
+        if (mCoord >= 0.820 && mCoord <= 0.935 && vTmp.y < laojiaoliangMinOverPingtuanY) {
+          laojiaoliangMinOverPingtuanY = vTmp.y;
+        }
+      }
+      if (c.layer >= 9 && c.layer <= 11) {
+        // Exclude only the central Ø164 mm 雷公柱 top tenon that intentionally sockets inside the hollow 攒尖宝顶 finial mortise
+        if (Math.hypot(vTmp.x, vTmp.z) < 0.09) continue;
+        // Compare against roofSurfaceY - 0.024 (actual bottom soffit of L12 曲面望板, including L10 老角梁/子角梁!)
+        const clearMm = ((roofSurfaceY(vTmp.x, vTmp.z) - 0.024) - vTmp.y) * 1000.0;
+        if (clearMm < minRoofClearanceMm) minRoofClearanceMm = clearMm;
+      }
+    }
+  }
+
+  const seDiagHua = byName.get('东南铺作 · 第二跳斜华拱');
+  const seQixin   = byName.get('东南铺作 · 中心齐心斗');
+  const seLing    = byName.get('东南铺作 · 横侧瓜子令拱');
+  const seJiaohu  = byName.get('东南铺作 · 横向外跳交互斗');
+
+  const diagHuagongQixindouOffsetMm = (seDiagHua && seQixin)
+    ? Number((Math.hypot(seDiagHua.basePos.x - seQixin.basePos.x, seDiagHua.basePos.z - seQixin.basePos.z) * 1000).toFixed(2))
+    : null;
+  const diagHuagongSeatGapMm = (seDiagHua && seQixin)
+    ? Number(((seDiagHua.basePos.y - (seQixin.basePos.y + 0.072)) * 1000).toFixed(2))
+    : null;
+  const linggongJiaohudouOffsetMm = (seLing && seJiaohu)
+    ? Number((Math.hypot(seLing.basePos.x - seJiaohu.basePos.x, seLing.basePos.z - seJiaohu.basePos.z) * 1000).toFixed(2))
+    : null;
+  const linggongSeatGapMm = (seLing && seJiaohu)
+    ? Number(((seLing.basePos.y - (seJiaohu.basePos.y + 0.072)) * 1000).toFixed(2))
+    : null;
+
+  const layerElevations = {};
+  for (let L = 0; L <= MAX_LAYER; L++) {
+    if (Number.isFinite(layerMinY[L])) {
+      layerElevations[`L${L}`] = [Number(layerMinY[L].toFixed(4)), Number(layerMaxY[L].toFixed(4))];
+    }
+  }
+  return {
+    minRoofSheathingClearanceMm: Number(minRoofClearanceMm.toFixed(2)),
+    minRoofTileClearanceMm: Number((minRoofClearanceMm + 24.0).toFixed(2)),
+    roofPiercingVertices: minRoofClearanceMm < 0 ? 1 : 0,
+    plinthGroundMinY: Number(plinthMinY.toFixed(4)),
+    stairPlinthPenetrations,
+    diagHuagongQixindouOffsetMm,
+    diagHuagongSeatGapMm,
+    linggongJiaohudouOffsetMm,
+    linggongSeatGapMm,
+    shuatouLiaoyanClearanceMm: Number(((3.491 - shuatouMaxUnderLiaoyanY) * 1000).toFixed(2)),
+    laojiaoliangPingtuanClearanceMm: Number(((laojiaoliangMinOverPingtuanY - 4.045) * 1000).toFixed(2)),
+    layerElevations
+  };
+})();
+
+window.getStats = function getStats() {
+  let maxErrMm = 0;
+  const vProj = new THREE.Vector3();
+  let seMinPxX = Infinity, seMaxPxX = -Infinity, seMinPxY = Infinity, seMaxPxY = -Infinity;
+  const wCss = window.innerWidth, hCss = window.innerHeight;
+
+  for (let i = 0; i < components.length; i++) {
+    const c = components[i];
+    if (c.explodable) {
+      const d = c.mesh.position.distanceTo(c.basePos) * 1000.0;
+      if (d > maxErrMm) maxErrMm = d;
+    }
+    if ((c.name.startsWith('东南铺作 ·') || c.name.startsWith('东南翼角 ·')) && c.layer >= 4 && c.layer <= 10) {
+      c.mesh.updateMatrixWorld(true);
+      const pos = c.mesh.geometry.attributes.position;
+      for (let k = 0; k < pos.count; k += 3) {
+        vProj.set(pos.getX(k), pos.getY(k), pos.getZ(k)).applyMatrix4(c.mesh.matrix).project(camera);
+        const px = (vProj.x * 0.5 + 0.5) * wCss;
+        const py = (0.5 - vProj.y * 0.5) * hCss;
+        if (px < seMinPxX) seMinPxX = px;
+        if (px > seMaxPxX) seMaxPxX = px;
+        if (py < seMinPxY) seMinPxY = py;
+        if (py > seMaxPxY) seMaxPxY = py;
+      }
+    }
+  }
+  const layerSnapshot = {};
+  for (let L = 1; L <= MAX_LAYER; L++) {
+    layerSnapshot[`L${L}`] = Number(springCtrl.layers[L].currentP.toFixed(4));
+  }
+  return {
+    totalMeshes: components.length,
+    explodableMeshes: explodableCount,
+    interactiveCount: interactiveMeshes.length,
+    fov: camera.fov,
+    cameraY: Number(camera.position.y.toFixed(3)),
+    mode: currentMode,
+    inkMix: Number(sharedUniforms.uInkMix.value.toFixed(4)),
+    explodeTarget: springCtrl.target,
+    explodeAvg: Number(sharedUniforms.uExplodeAvg.value.toFixed(4)),
+    errorMm: Number(maxErrMm.toFixed(2)),
+    seDougongScreenBounds: {
+      minX: Math.round(seMinPxX),
+      maxX: Math.round(seMaxPxX),
+      minY: Math.round(seMinPxY),
+      maxY: Math.round(seMaxPxY)
+    },
+    carpentryAudit,
+    layers: layerSnapshot,
+    fps: displayedFps
+  };
+};
+
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  DPR = Math.min(window.devicePixelRatio || 1, 2.0);
+  SSAA = DPR <= 1.25 ? 1.35 : 1.0;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(DPR);
+  renderer.setSize(w, h);
+
+  displayW = Math.max(1, Math.floor(w * DPR));
+  displayH = Math.max(1, Math.floor(h * DPR));
+  renderW = Math.max(1, Math.floor(displayW * SSAA));
+  renderH = Math.max(1, Math.floor(displayH * SSAA));
+  rtScene.dispose();
+  rtScene = createSceneRenderTarget(renderW, renderH);
+  rtTensor.setSize(Math.max(1, Math.floor(displayW * 0.5)), Math.max(1, Math.floor(displayH * 0.5)));
+
+  tensorMat.uniforms.tScene.value = rtScene.texture;
+  tensorMat.uniforms.uTexel.value.set(1.0 / displayW, 1.0 / displayH);
+  compositeMat.uniforms.tScene.value = rtScene.texture;
+  compositeMat.uniforms.tDepth.value = rtScene.depthTexture;
+  compositeMat.uniforms.uResolution.value.set(displayW, displayH);
+});
+
+let prevPerf = performance.now();
+function animate(now) {
+  requestAnimationFrame(animate);
+  const dt = Math.min(0.05, Math.max(0.0, (now - prevPerf) * 0.001));
+  prevPerf = now;
+
+  if (!deterministicOverride) {
+    simTime += dt;
+    const diff = targetInkMix - sharedUniforms.uInkMix.value;
+    if (Math.abs(diff) > 0.0005) {
+      sharedUniforms.uInkMix.value += diff * Math.min(1.0, dt * 4.8);
+    } else {
+      sharedUniforms.uInkMix.value = targetInkMix;
+    }
+    updateHoverRaycast();
+    frameCounter++;
+    evaluateSceneAt(simTime, frameCounter <= 2);
+
+    fpsFrames++;
+    if (now - lastFpsStamp >= 500) {
+      displayedFps = Math.round((fpsFrames * 1000) / (now - lastFpsStamp));
+      statFpsEl.textContent = `${displayedFps} FPS`;
+      fpsFrames = 0;
+      lastFpsStamp = now;
+    }
+  } else {
+    fpsFrames = 0;
+    lastFpsStamp = now;
+  }
+}
+
+evaluateSceneAt(0.0, true);
+prevPerf = performance.now();
+lastFpsStamp = prevPerf;
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

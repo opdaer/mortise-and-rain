@@ -1,0 +1,17 @@
+# Firebase local cache & logs
+.firebase/
+firebase-debug.log*
+
+# Local heavy media & raw QA dumps (keep docs/*.jpg & og-preview.jpg tracked!)
+*.mp4
+*.wav
+*.png
+screenshots/
+!docs/*.jpg
+!og-preview.jpg
+
+# Python / OS artifacts
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
